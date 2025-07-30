@@ -1,26 +1,62 @@
-# MedFlow
+# 🏥 MedFlow
 
-## Project Description
+**MedFlow** is a full-stack hospital management system designed to streamline operations in clinics and hospitals. It provides secure, role-based access for medical professionals, front desk staff, pharmacists, lab technicians, radiologists, and administrators.
 
-MedFlow is a full-stack medical record and clinic management application designed to streamline hospital and clinic operations. It supports role-based access for doctors, front desk staff, pharmacists, lab technicians, radiologists, and administrators, providing a comprehensive system to manage appointments, patient records, prescriptions, billing, and medical history efficiently.
+---
 
-### Key Features
+## 📋 Features
 
-- **Role-Based Authentication**: Secure JWT-based login with differentiated access for doctors, front desk, pharmacists, lab technicians, radiologists, and admins.
-- **Appointment Scheduling**: View and manage daily and future appointments, with visual status indicators and a live progress bar tracking appointment durations.
-- **Patient Management**: Register new patients, search by name or CPR (national ID), and access detailed medical histories including symptoms, diagnoses, lab/x-ray requests and results, treatments, and payment status.
-- **Pharmacy Module**: Doctors prescribe medicines with dosage, administration route, and duration details; favorite prescriptions can be saved and auto-filled. Pharmacists can view prescriptions and manage medicine dispensing.
-- **Payment Tracking**: Display outstanding payments, deposits, and payment type (insurance or case).
-- **Medical Documentation**: Print sick leaves and referral letters, track sick leave history.
-- **Administrative Controls**: Admin users manage user roles and have full access to the system.
-- **Future Appointments & Doctor Availability**: Filter and view appointments by doctor and date to ease scheduling and referrals.
-- **Secret Notes**: Confidential notes visible only to the authoring doctor for sensitive patient information.
-- **Visual Indicators**: Appointment tabs change color based on status (booked, arrived, in session, finished, missed), with dynamic resizing of appointment blocks if treatment exceeds scheduled time.
+### 🧑‍⚕️ Role-Based Access
+- **Doctor**: Full access to all system features.
+- **Front Desk**: Register patients, schedule/manage appointments, print sick leaves/referral letters.
+- **Pharmacist**: View prescriptions and manage medicine dispensing.
+- **Lab Technician / Radiologist**: View and fulfill test/imaging requests.
+- **Admin**: Manage all users and roles with full system control.
 
-## Installation Instructions
+### 📅 Appointment Scheduling
+- Calendar-based appointment system with real-time status updates.
+- View appointments by **date** or **specific doctor**.
+- Visual status indicators (booked, arrived, in session, finished, missed).
+- Dynamic progress bar and adjustable appointment tab size based on duration.
 
-1. **Clone the repository**
+### 👤 Patient Management
+- Register new patients.
+- Search patients by **name** or **CPR (national ID)**.
+- Detailed patient history:
+  - Symptoms and diagnosis
+  - Doctor check-up records
+  - Lab/X-ray requests & results
+  - Treatment plan (with "completed" checkbox)
+  - Blacklist marking
+  - Sick leave history
+  - Referral letters
 
-   ```bash
-   git clone https://github.com/your-username/medflow.git
-   cd medflow
+### 💊 Pharmacy System
+- Doctors prescribe medication with:
+  - Drug name
+  - Dose
+  - Route of administration
+  - Duration and frequency
+- Save "favorite" prescriptions with custom labels (e.g., "RCT pain meds").
+- Prescription pricing and payment handling.
+
+### 💰 Payment Tracking
+- View pending payments and deposit status.
+- Choose between **insurance** or **cash** payment modes.
+- Auto-calculate amount owed after appointment.
+
+### 📝 Medical Documents
+- **Sick Leave**: Generate and print, with access from the patient page.
+- **Referral Letters**: Generate and print referral details for other doctors/hospitals.
+
+### 🔐 Secret Notes
+- Private notes visible only to the creating doctor.
+
+---
+
+## 🚀 Installation
+
+```bash
+git clone https://github.com/your-username/medflow.git
+cd medflow
+npm install
