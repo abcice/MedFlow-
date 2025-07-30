@@ -1,60 +1,113 @@
-# 🏥 MedFlow
-
-**MedFlow** is a full-stack hospital management system designed to streamline operations in clinics and hospitals. It provides secure, role-based access for medical professionals, front desk staff, pharmacists, lab technicians, radiologists, and administrators.
-
----
-
-## 📋 Features
-
-### 🧑‍⚕️ Role-Based Access
-- **Doctor**: Full access to all system features.
-- **Front Desk**: Register patients, schedule/manage appointments, print sick leaves/referral letters.
-- **Pharmacist**: View prescriptions and manage medicine dispensing.
-- **Lab Technician / Radiologist**: View and fulfill test/imaging requests.
-- **Admin**: Manage all users and roles with full system control.
-
-### 📅 Appointment Scheduling
-- Calendar-based appointment system with real-time status updates.
-- View appointments by **date** or **specific doctor**.
-- Visual status indicators (booked, arrived, in session, finished, missed).
-- Dynamic progress bar and adjustable appointment tab size based on duration.
-
-### 👤 Patient Management
-- Register new patients.
-- Search patients by **name** or **CPR (national ID)**.
-- Detailed patient history:
-  - Symptoms and diagnosis
-  - Doctor check-up records
-  - Lab/X-ray requests & results
-  - Treatment plan (with "completed" checkbox)
-  - Blacklist marking
-  - Sick leave history
-  - Referral letters
-
-### 💊 Pharmacy System
-- Doctors prescribe medication with:
-  - Drug name
-  - Dose
-  - Route of administration
-  - Duration and frequency
-- Save "favorite" prescriptions with custom labels (e.g., "RCT pain meds").
-- Prescription pricing and payment handling.
-
-### 💰 Payment Tracking
-- View pending payments and deposit status.
-- Choose between **insurance** or **cash** payment modes.
-- Auto-calculate amount owed after appointment.
-
-### 📝 Medical Documents
-- **Sick Leave**: Generate and print, with access from the patient page.
-- **Referral Letters**: Generate and print referral details for other doctors/hospitals.
-
-### 🔐 Secret Notes
-- Private notes visible only to the creating doctor.
+# 🏥 **MedFlow**  
+*A Role-Based Hospital Management System*
 
 ---
 
-## 🚀 Installation
+## 📌 **Project Overview**
+
+**MedFlow** is a full-stack hospital management system built to optimize clinical workflows.  
+It features secure role-based access, appointment tracking, patient records, prescriptions, and administrative tools — all in one unified system.
+
+---
+
+## 🔐 **User Roles & Access**
+
+| Role            | Access Description                                                                 |
+|-----------------|-------------------------------------------------------------------------------------|
+| **Admin**       | Full access to all features and user management                                     |
+| **Doctor**      | Access to all medical features (appointments, history, prescriptions, requests)     |
+| **Front Desk**  | Register patients, manage/view appointments, print sick leave/referrals             |
+| **Pharmacist**  | View prescriptions, manage dispensing, view schedule                                |
+| **Lab Technician** | View and fulfill lab test requests                                              |
+| **Radiologist** | View and fulfill imaging requests                                                   |
+
+---
+
+## 📅 **Appointment System**
+
+- Interactive calendar view
+- View appointments by **date** or **doctor**
+- Color/status indicators: `booked`, `arrived`, `in session`, `finished`, `missed`
+- **Live progress bar**: horizontal line moves with time
+- Appointment tab **expands downward** if treatment exceeds scheduled time
+- Filter by doctor to easily schedule or coordinate care
+
+---
+
+## 👤 **Patient Management**
+
+- Register new patients  
+- Search by **name** or **CPR (national ID)**  
+- Detailed patient history includes:
+  - Subjective symptoms
+  - Diagnosis and doctor’s notes
+  - Lab/X-ray/imaging requests and past results
+  - Treatment plan (with checkbox when completed)
+  - Blacklist checkbox for troublesome patients
+  - Payment and deposit history
+  - Prescription history
+  - **Sick leave records** with print options
+  - **Referral letters** with print options
+
+---
+
+## 💊 **Pharmacy System**
+
+- Doctor fills:  
+  - Drug name  
+  - Dose  
+  - Administration route  
+  - Frequency  
+  - Duration  
+- Prescription includes **price**
+- Patient must pay at the pharmacy
+- Save favorite prescriptions (e.g., *RCT Pain Meds*)
+  - Example: Amoxicillin 500mg, orally, 3x/day, 5 days
+
+---
+
+## 💰 **Payments & Billing**
+
+- Check patient’s previous deposits
+- Show amount to pay after visit
+- Payment types: `Insurance` or `Cash`
+
+---
+
+## 📝 **Printable Documents**
+
+- **Sick Leave** (doctor, front desk, admin access)
+  - Accessed via patient page  
+  - Includes date, reason, and duration
+- **Referral Letter**
+  - To refer to another doctor or hospital
+  - Auto-filled with patient details  
+- Both are **printable**
+
+---
+
+## 👁️ **Visibility Enhancements**
+
+- Front desk can filter appointments by doctor
+- See full schedules of all doctors or one at a time
+- Patient registration page supports:
+  - Selecting or searching doctor by name
+
+---
+
+## 🛠️ **Technologies Used**
+
+- **Backend**: Node.js, Express.js  
+- **Database**: MongoDB + Mongoose  
+- **Authentication**: JWT  
+- **Frontend**: JSX (React Views)  
+- **Styling**: CSS  
+- **Testing**: Jest, MongoMemoryServer  
+- **Dev Tools**: dotenv, method-override
+
+---
+
+## 🚀 **Installation**
 
 ```bash
 git clone https://github.com/your-username/medflow.git
