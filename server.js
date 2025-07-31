@@ -12,6 +12,6 @@ db.on('error', (error) => {
 })
 
 app.listen(PORT, () => {
-    console.log(`We in the building ${PORT}`)
+    console.log(`MedFlow is running ${PORT}`)
 })
 
