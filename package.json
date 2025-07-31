@@ -4,7 +4,8 @@
   "description": "*A Role-Based Hospital Management System*",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
@@ -19,8 +20,12 @@
   "homepage": "https://github.com/abcice/MedFlow-#readme",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.2",
+    "connect-mongo": "^5.1.0",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
+    "express-session": "^1.18.2",
     "jsonwebtoken": "^9.0.2",
     "jsx-view-engine": "^1.0.0",
     "method-override": "^3.0.0",
