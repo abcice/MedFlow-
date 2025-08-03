@@ -21,8 +21,7 @@ router.get('/new',
     authDataController.auth, 
     viewController.newView
 );
-// upload patient photo
-router.post('/', upload.single('photo'), dataController.create, viewController.redirectHome);
+
 
 // Delete Patient
 router.delete('/:id', 
@@ -38,12 +37,14 @@ router.put('/:id',
     viewController.redirectShow
 );
 
-// Create Patient
+// Create Patient with photo upload and auth
 router.post('/', 
     authDataController.auth, 
+    upload.single('photo'), 
     dataController.create, 
     viewController.redirectHome
 );
+
 
 // Edit Patient Form
 router.get('/:id/edit', 

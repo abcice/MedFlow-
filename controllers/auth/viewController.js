@@ -9,16 +9,18 @@ const viewController = {
   },
 
   apiAuth(req, res, next) {
-    res.json({ user: req.user, token: res.locals.data.token });
+    res.json({ user: req.user, token: res.locals.data.token,});
   },
 
   redirectToLogin(req, res, next) {
     res.redirect('/users/login');
   },
 
-  redirectHome(req, res, next) {
-    res.redirect('/patients'); 
-  }
+redirectHome(req, res, next) {
+    res.redirect(`/patients?token=${res.locals.data.token}`);
+}
+
+
 
 };
 

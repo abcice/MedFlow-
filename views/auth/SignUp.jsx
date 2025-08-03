@@ -1,5 +1,5 @@
 const React = require('react');
-const Layout = require('../layouts/Layout');
+const Layout = require('../layouts/Layout.jsx');
 
 function SignUp(props) {
     return (
