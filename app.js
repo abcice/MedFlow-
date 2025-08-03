@@ -3,7 +3,8 @@ const morgan = require('morgan')
 const jsxEngine = require('jsx-view-engine')
 const methodOverride = require('method-override')
 const userRoutes = require('./controllers/auth/routeController')
-// const 
+const patientsRoutes = require('./controllers/patients/routeController')
+// const appointmentsRoutes = require('./controllers/appointments/routeController')
 const apiRoutes = require('./routes/apiRoutes')
 const app = express()
 
@@ -22,6 +23,7 @@ app.use(express.static('public'))
 app.use(morgan('dev'))
 
 app.use('/users', userRoutes)    
+app.use('/patients', patientsRoutes)
 app.use('/api', apiRoutes)
 
 

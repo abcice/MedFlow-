@@ -3,7 +3,7 @@ const router = express.Router();
 
 const dataController = require('./dataController.js')
 const viewController = require('./viewController.js')
-const patientsViewController = require('../patients/ViewController.js')
+const patientsViewController = require('../patients/viewController.js')
 
 // SignUp
 
@@ -14,13 +14,15 @@ router.post('/', dataController.createUser, viewController.redirectToLogin)// si
 
 router.get('/login', viewController.signIn) // show login form
 router.post('/login', dataController.loginUser, patientsViewController.redirectHome)
-// UPDATE USER (admin)
 
-router.put('/:id', dataController.updateUser)
-//Delete User (admin)
+// Admin-Only
+// Update User 
+router.put('/:id', dataController.auth, dataController.requireAdmin, dataController.updateUser);
 
-router.delete('/:id', dataController.auth, dataController.deleteUser)
+// Delete User
+router.delete('/:id', dataController.auth, dataController.requireAdmin, dataController.deleteUser);
 
-
+// Change User Role
+router.put('/:id/role', dataController.auth, dataController.requireAdmin, dataController.updateUserRole);
 
 module.exports = router;
