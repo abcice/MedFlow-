@@ -58,5 +58,18 @@ dataController.show = async (req, res, next) => {
         res.status(400).send({ message: error.message });
     }
 };
+// Upload patient photo
+dataController.create = async (req, res, next) => {
+    try {
+        if (req.file) {
+            req.body.photo = '/uploads/patients/' + req.file.filename;
+        }
+
+        res.locals.data.patient = await Patient.create(req.body);
+        next();
+    } catch (error) {
+        res.status(400).send({ message: error.message });
+    }
+};
 
 module.exports = dataController;

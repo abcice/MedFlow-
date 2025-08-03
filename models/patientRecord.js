@@ -19,9 +19,16 @@ const patientRecordSchema = new mongoose.Schema({
     examination: String,
     diagnosis: String,
     treatmentPlan: String,
-    prescriptions: [String], // Can later be linked to a Prescription model
-    labRequests: [String],   // Can later be linked to a LabRequest model
-    radiologyRequests: [String], // Can later be linked to a RadiologyRequest model
+prescriptions: [
+    { type: mongoose.Schema.Types.ObjectId, ref: 'Prescription' }
+],
+labRequests: [
+    { type: mongoose.Schema.Types.ObjectId, ref: 'Request' }
+],
+radiologyRequests: [
+    { type: mongoose.Schema.Types.ObjectId, ref: 'Request' }
+]
+, 
     privateNote: String // Only visible to the doctor who wrote it
 }, { timestamps: true });
 

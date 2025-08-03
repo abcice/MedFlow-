@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-
+const upload = require('../../middleware/upload');
 const viewController = require('./viewController.js');
 const dataController = require('./dataController.js');
 const authDataController = require('../auth/dataController.js');
@@ -21,6 +21,8 @@ router.get('/new',
     authDataController.auth, 
     viewController.newView
 );
+// upload patient photo
+router.post('/', upload.single('photo'), dataController.create, viewController.redirectHome);
 
 // Delete Patient
 router.delete('/:id', 
