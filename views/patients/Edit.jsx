@@ -1,7 +1,125 @@
-const React = require('react')
+const React = require('react');
+const Layout = require('../layouts/Layout');
+
 function Edit(props) {
-    
+    const patient = props.patient;
+
+    return (
+        <Layout>
+            <h1>✏️ Edit Patient</h1>
+
+            <form action={`/patients/${patient._id}?_method=PUT&token=${props.token}`} method="POST" encType="multipart/form-data">
+                <div className="form-group">
+                    <label htmlFor="name">Full Name:</label>
+                    <input 
+                        type="text" 
+                        id="name"
+                        name="name" 
+                        defaultValue={patient.name}
+                        required 
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="cpr">CPR:</label>
+                    <input 
+                        type="text" 
+                        id="cpr"
+                        name="cpr" 
+                        defaultValue={patient.cpr}
+                        required 
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="age">Age:</label>
+                    <input 
+                        type="number" 
+                        id="age"
+                        name="age" 
+                        defaultValue={patient.age}
+                        required 
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="gender">Gender:</label>
+                    <select id="gender" name="gender" defaultValue={patient.gender} required>
+                        <option value="">-- Select Gender --</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="phone">Phone:</label>
+                    <input 
+                        type="text" 
+                        id="phone"
+                        name="phone" 
+                        defaultValue={patient.phone}
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="address">Address:</label>
+                    <input 
+                        type="text" 
+                        id="address"
+                        name="address" 
+                        defaultValue={patient.address}
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="paymentType">Payment Type:</label>
+                    <select id="paymentType" name="paymentType" defaultValue={patient.paymentType} required>
+                        <option value="">-- Select Payment Type --</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Insurance">Insurance</option>
+                    </select>
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="insuranceProvider">Insurance Provider:</label>
+                    <input 
+                        type="text" 
+                        id="insuranceProvider"
+                        name="insuranceProvider" 
+                        defaultValue={patient.insuranceProvider}
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="photo">Patient Photo (Upload new to replace):</label>
+                    <input 
+                        type="file" 
+                        id="photo"
+                        name="photo" 
+                        accept="image/*"
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="notes">Notes:</label>
+                    <textarea 
+                        id="notes" 
+                        name="notes"
+                        defaultValue={patient.notes}
+                    ></textarea>
+                </div>
+
+                <div className="d-flex gap-2">
+                    <button type="submit" className="btn btn-primary">
+                        💾 Save Changes
+                    </button>
+                    <a href={`/patients/${patient._id}?token=${props.token}`} className="btn btn-secondary">
+                        ← Cancel
+                    </a>
+                </div>
+            </form>
+        </Layout>
+    );
 }
 
-
-module.exports = Edit
+module.exports = Edit;
