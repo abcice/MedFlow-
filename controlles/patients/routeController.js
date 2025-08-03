@@ -1,25 +1,60 @@
-const express = require('express')
-const router = express.Router()
-const viewController = require('./viewController.js')
-const dataController = require('./dataController.js')
-const authDataController = require('../auth/dataController.js')
-// add routes
-// Index
-router.get('/', authDataController.auth,dataController.index, viewController.index); // show all patients
+const express = require('express');
+const router = express.Router();
 
-// New
-router.get('/new', authDataController.auth, viewController.newView); 
-//Delete
-router.delete('/:id', dataController.destroy, viewController.redirectHome);
-// Update
-router.put('/:id', dataController.update, viewController.redirectShow);
+const viewController = require('./viewController.js');
+const dataController = require('./dataController.js');
+const authDataController = require('../auth/dataController.js');
 
-// Create
-router.post('/', authDataController.auth, dataController.create, viewController.redirectHome);
-//Edit
-router.get('/:id/edit', authDataController.auth, dataController.show, viewController.edit);
+// =========================
+// Patients Routes
+// =========================
 
-// Show
-router.get('/:id', authDataController.auth, dataController.show, viewController.show); 
-// export router
+// Index — Show all patients for logged-in user
+router.get('/', 
+    authDataController.auth,        // Check token, set req.user
+    dataController.index,           // Get list of patients
+    viewController.index             // Render patient list
+);
+
+// New Patient Form
+router.get('/new', 
+    authDataController.auth, 
+    viewController.newView
+);
+
+// Delete Patient
+router.delete('/:id', 
+    authDataController.auth,        // Any logged-in user can delete patients
+    dataController.destroy, 
+    viewController.redirectHome
+);
+
+// Update Patient
+router.put('/:id', 
+    authDataController.auth,        // Any logged-in user can update patients
+    dataController.update, 
+    viewController.redirectShow
+);
+
+// Create Patient
+router.post('/', 
+    authDataController.auth, 
+    dataController.create, 
+    viewController.redirectHome
+);
+
+// Edit Patient Form
+router.get('/:id/edit', 
+    authDataController.auth, 
+    dataController.show, 
+    viewController.edit
+);
+
+// Show Patient Profile
+router.get('/:id', 
+    authDataController.auth, 
+    dataController.show, 
+    viewController.show
+);
+
 module.exports = router;
