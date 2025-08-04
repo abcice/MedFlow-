@@ -6,13 +6,18 @@ function Dashboard(props) {
 
     return (
         <Layout token={token}>
-            <h1>🏥 MedFlow Dashboard</h1>
-            <p>Welcome! Please choose an option below.</p>
-            <div className="dashboard-menu">
-                <a href={`/patients?token=${token}`}>👥 Manage Patients</a>
-                <a href={`/appointments?token=${token}`}>📅 Manage Appointments</a>
-                <a href={`/patients/new?token=${token}`}>➕ Add New Patient</a>
-                <a href={`/appointments/new?token=${token}`}>➕ Create Appointment</a>
+            <div className="dashboard-container">
+                <h1>📊 Dashboard</h1>
+                <p className="dashboard-subtitle">
+                    Welcome to <strong>MedFlow</strong>! Choose an action below:
+                </p>
+
+                <div className="dashboard-buttons">
+                    <a href={`/patients?token=${token}`} className="dashboard-btn btn-primary">👥 View Patients</a>
+                    <a href={`/patients/new?token=${token}`} className="dashboard-btn btn-primary">➕ Add New Patient</a>
+                    <a href={`/appointments?token=${token}`} className="dashboard-btn btn-primary">📅 View Appointments</a>
+                    <a href={`/appointments/new?token=${token}`} className="dashboard-btn btn-primary">➕ Create Appointment</a>
+                </div>
             </div>
         </Layout>
     );

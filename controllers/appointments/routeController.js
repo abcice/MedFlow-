@@ -4,12 +4,17 @@ const authDataController = require('../auth/dataController.js');
 const dataController = require('./dataController.js');
 const viewController = require('./viewController.js');
 
+// =========================
+// Appointments Routes
+// =========================
+
 // Index — show all appointments
 router.get('/',
     authDataController.auth,
     dataController.index,
     viewController.index
 );
+
 // New Appointment Form
 router.get('/new', 
     authDataController.auth, 
@@ -20,6 +25,27 @@ router.get('/new',
 router.post('/', 
     authDataController.auth, 
     dataController.create, 
+    viewController.redirectHome
+);
+
+// Edit Appointment Form
+router.get('/:id/edit',
+    authDataController.auth,
+    dataController.show,
+    viewController.edit
+);
+
+// Update Appointment
+router.put('/:id',
+    authDataController.auth,
+    dataController.update,       // ✅ Move logic into dataController
+    viewController.redirectHome
+);
+
+// Delete Appointment
+router.delete('/:id', 
+    authDataController.auth, 
+    dataController.destroy, 
     viewController.redirectHome
 );
 

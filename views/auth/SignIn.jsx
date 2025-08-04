@@ -3,7 +3,7 @@ const Layout = require('../layouts/Layout');
 
 function SignIn(props) {
     return (
-        <Layout token={props.token} hideAuthLinks={true}> {/* Hide login link in navbar */}
+        <Layout page="login" token={props.token} hideAuthLinks={true}> {/* Hide login link in navbar */}
             {/* Banner */}
             <div className="auth-banner-container">
                 <img src="https://i.imgur.com/ML0wrCz.png" alt="Medical Banner" className="auth-banner" />
@@ -11,7 +11,7 @@ function SignIn(props) {
 
             {/* Login Form */}
             <div className="auth-container no-overlap">
-                <h1>🔐 Sign In</h1>
+                <h1> Sign In</h1>
                 <form action="/users/login" method="POST">
                     <label htmlFor="username">Username:</label>
                     <input type="text" id="username" name="username" required />

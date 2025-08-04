@@ -1,9 +1,9 @@
-/* -------------------------
-   Global Styles
-------------------------- */
+/* ===================================
+   1. GLOBAL STYLES
+=================================== */
 body {
   font-family: 'Open Sans', sans-serif;
-  background: #f5faff; /* Soft light blue background */
+  background: #f5faff; /* Soft hospital blue background */
   margin: 0;
   padding: 0;
   color: #1a2b3c; /* Dark navy text for good contrast */
@@ -12,7 +12,7 @@ body {
 
 h1, h2, h3, h4 {
   font-family: 'Nunito Sans', sans-serif;
-  color: #0a4d6c; /* Futuristic dark teal */
+  color: #0a4d6c; /* Dark teal for headings */
   margin-bottom: 15px;
 }
 
@@ -22,42 +22,42 @@ h1, h2, h3, h4 {
   padding: 20px;
 }
 
-/* -------------------------
-   Navbar
-------------------------- */
+/* ===================================
+   2. NAVBAR
+=================================== */
 .navbar {
-    background-color: #e9f4fb; /* Light hospital blue */
-    padding: 10px 20px;
-    display: flex;
-    align-items: center;
-    border-bottom: 2px solid #d0e4f1; /* subtle separator */
+  background-color: #e9f4fb;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  border-bottom: 2px solid #d0e4f1;
 }
 
 .navbar-left {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .logo {
-    height: 40px;
-    vertical-align: middle;
-    margin-right: 15px;
+  height: 40px;
+  vertical-align: middle;
+  margin-right: 15px;
 }
 
 .navbar-links a {
-    color: #0a4d6c;
-    margin-right: 20px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: 0.3s;
+  color: #0a4d6c;
+  margin-right: 20px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: 0.3s;
 }
 
 .navbar-links a:hover {
-    color: #0077b6;
-    text-decoration: underline;
+  color: #0077b6;
+  text-decoration: underline;
 }
 
-/* Logout Button - theme friendly */
+/* Logout Button */
 .logout-btn {
   margin-left: auto;
   color: #0a4d6c;
@@ -75,9 +75,9 @@ h1, h2, h3, h4 {
   border-color: rgba(10, 77, 108, 0.6);
 }
 
-/* -------------------------
-   Forms
-------------------------- */
+/* ===================================
+   3. FORMS
+=================================== */
 form {
   background: white;
   padding: 20px;
@@ -108,11 +108,11 @@ input:focus, select:focus, textarea:focus {
   box-shadow: 0 0 5px rgba(0, 119, 182, 0.5);
 }
 
-/* -------------------------
-   Buttons
-------------------------- */
+/* ===================================
+   4. BUTTONS
+=================================== */
 button, .btn {
-  padding: 10px 15px;
+  padding: 12px;
   border-radius: 6px;
   border: none;
   cursor: pointer;
@@ -120,24 +120,28 @@ button, .btn {
   font-weight: bold;
   text-decoration: none;
   transition: 0.3s;
+  display: inline-block;
+  width: 100%; /* Consistent button widths in forms */
+  text-align: center;
 }
 
 .btn-primary {
-  background-color: #0077b6;
+  background-color: #0096c7;
   color: white;
 }
 
 .btn-primary:hover {
-  background-color: #023e8a;
+  background-color: #0077a2;
 }
 
 .btn-secondary {
-  background-color: #ccc;
-  color: #333;
+  background-color: #edf6f9;
+  color: #0a4d6c;
+  border: 1px solid #cde4ec;
 }
 
 .btn-secondary:hover {
-  background-color: #bbb;
+  background-color: #d4ebf2;
 }
 
 .btn-danger {
@@ -149,9 +153,9 @@ button, .btn {
   background-color: #b71c1c;
 }
 
-/* -------------------------
-   Tables
-------------------------- */
+/* ===================================
+   5. TABLES
+=================================== */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -177,9 +181,9 @@ tr:hover {
   background: #caf0f8;
 }
 
-/* -------------------------
-   Suggestions Dropdown
-------------------------- */
+/* ===================================
+   6. SUGGESTION DROPDOWN
+=================================== */
 .suggestions {
   position: absolute;
   background: white;
@@ -203,9 +207,9 @@ tr:hover {
   background: #e0f7fa;
 }
 
-/* -------------------------
-   Cards (Dashboard Widgets)
-------------------------- */
+/* ===================================
+   7. CARDS (Dashboard Widgets)
+=================================== */
 .card {
   background: white;
   padding: 20px;
@@ -217,33 +221,147 @@ tr:hover {
 .card:hover {
   transform: translateY(-3px);
 }
-/* banner */
 
+/* ===================================
+   8. AUTH PAGES (Sign In / Sign Up)
+=================================== */
 .auth-banner-container {
-    width: 100%;
+  width: 100%;
 }
 
 .auth-banner {
-    width: 100%;
-    height: 220px;
-    object-fit: cover;
-    border-bottom: 3px solid #e0e0e0;
+  width: 100%;
+  height: 150px; /* Reduced height for less scrolling */
+  object-fit: cover;
+  border-bottom: 3px solid #e0e0e0;
 }
 
 .auth-container {
-    max-width: 400px;
-    margin: 30px auto;
-    background: white;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.auth-container.no-overlap {
-    margin-top: 40px;
+  max-width: 380px;
+  margin: 20px auto;
+  background: white;
+  padding: 18px;
+  border-radius: 12px;
+  border: 1px solid #ddeaf0;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
 }
 
 .auth-container h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Space between buttons */
+}
+
+.form-buttons .btn {
+  width: 100%;
+}
+/*       Dashboard    */
+
+/* Dashboard Container */
+.dashboard-container {
+    max-width: 400px;
+    margin: 0 auto;
     text-align: center;
-    margin-bottom: 20px;
+}
+
+/* Subtitle styling */
+.dashboard-subtitle {
+    font-size: 1.1rem;
+    color: #0a4d6c;
+    background: #e9f4fb;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+/* Dashboard Buttons */
+.dashboard-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.dashboard-btn {
+    display: block;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 8px;
+    text-align: center;
+    transition: background 0.3s ease, transform 0.1s ease;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+}
+
+.dashboard-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Themed Primary Button */
+.btn-primary.dashboard-btn {
+    background-color: #0077b6;
+    color: white;
+}
+
+.btn-primary.dashboard-btn:hover {
+    background-color: #023e8a;
+}
+
+/* Appointments Page */
+.appointments-container {
+    max-width: 1000px;
+    margin: auto;
+}
+
+.appointments-header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 15px;
+}
+
+.no-data {
+    text-align: center;
+    color: #777;
+    font-size: 1.1rem;
+    margin-top: 20px;
+}
+
+/* Appointments Table */
+.appointments-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.appointments-table th, 
+.appointments-table td {
+    padding: 10px;
+    border: 1px solid #eaeaea;
+}
+
+.appointments-table th {
+    background-color: #90e0ef;
+    color: #023e8a;
+}
+
+.appointments-table tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+.appointments-table tr:hover {
+    background: #caf0f8;
+}
+
+/* Small Action Buttons */
+.btn-small {
+    padding: 5px 10px;
+    font-size: 0.85rem;
 }

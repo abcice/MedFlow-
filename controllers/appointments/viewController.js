@@ -5,11 +5,21 @@ const viewController = {
             token: res.locals.data.token
         });
     },
+
     newView(req, res) {
         res.render('appointments/New', { token: res.locals.data.token });
     },
+
     redirectHome(req, res) {
         res.redirect(`/appointments?token=${res.locals.data.token}`);
+    },
+
+    edit(req, res) {
+        res.render('appointments/Edit', {
+            appointment: res.locals.data.appointment,
+            token: res.locals.data.token,
+            doctors: res.locals.data.doctors
+        });
     }
 };
 

@@ -3,7 +3,7 @@ const Layout = require('../layouts/Layout');
 
 function SignUp(props) {
     return (
-        <Layout token={props.token} hideAuthLinks={true}> {/* Hide auth links in navbar */}
+        <Layout page="signup" token={props.token} hideAuthLinks={true}>
             {/* Banner */}
             <div className="auth-banner-container">
                 <img src="https://i.imgur.com/ML0wrCz.png" alt="Medical Banner" className="auth-banner" />
@@ -11,7 +11,7 @@ function SignUp(props) {
 
             {/* Form Card */}
             <div className="auth-container no-overlap">
-                <h1>📝 Sign Up</h1>
+                <h1> Sign Up</h1>
                 <form action="/users" method="POST">
                     <label htmlFor="name">Full Name:</label>
                     <input type="text" id="name" name="name" required />
@@ -35,8 +35,11 @@ function SignUp(props) {
                     <label htmlFor="confirmPassword">Confirm Password:</label>
                     <input type="password" id="confirmPassword" name="confirmPassword" required />
 
-                    <button type="submit" className="btn btn-primary">Create Account</button>
-                    <a href="/users/login" className="btn btn-secondary">Login Instead</a>
+                    {/* Buttons */}
+                    <div className="form-buttons">
+                        <button type="submit" className="btn btn-primary">Create Account</button>
+                        <a href="/users/login" className="btn btn-secondary full-width">Login Instead</a>
+                    </div>
                 </form>
             </div>
         </Layout>
