@@ -8,8 +8,10 @@ const patientsRoutes = require('./controllers/patients/routeController');
 const dashboardRoutes = require('./controllers/dashboard/routeController');
 
 
-// const appointmentsRoutes = require('./controllers/appointments/routeController')
+const appointmentsRoutes = require('./controllers/appointments/routeController')
 const apiRoutes = require('./routes/apiRoutes');
+const passToken = require('./middleware/passToken');
+
 
 const app = express();
 
@@ -27,11 +29,12 @@ app.use((req, res, next) => {
 });
 app.use(express.static('public'));
 app.use(morgan('dev'));
+app.use(passToken);
 
 // Web Routes
 app.use('/users', userRoutes);    
 app.use('/patients', patientsRoutes);
-// app.use('/appointments', appointmentsRoutes);
+app.use('/appointments', appointmentsRoutes);
 
 // API Routes
 app.use('/api', apiRoutes);

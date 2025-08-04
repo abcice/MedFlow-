@@ -5,7 +5,8 @@ function Index(props) {
     const patients = props.patients;
 
     return (
-        <Layout>
+        <Layout token={props.token}>
+
             <h1>🏥 All Patients</h1>
 
             <div className="d-flex justify-between align-center mb-3">

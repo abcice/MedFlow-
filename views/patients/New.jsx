@@ -3,7 +3,7 @@ const Layout = require('../layouts/Layout');
 
 function New(props) {
     return (
-        <Layout>
+        <Layout token={props.token}>
             <h1>🏥 Add New Patient</h1>
 
             {}

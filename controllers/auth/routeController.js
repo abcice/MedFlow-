@@ -19,6 +19,9 @@ router.post('/login',
     dataController.loginUser, 
     dashboardViewController.redirectHome
 );
+//select doctors
+router.get('/doctors', dataController.auth, dataController.getDoctors);
+
 // Admin-Only
 // Update User 
 router.put('/:id', dataController.auth, dataController.requireAdmin, dataController.updateUser);

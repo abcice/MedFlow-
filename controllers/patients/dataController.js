@@ -36,16 +36,18 @@ dataController.update = async (req, res, next) => {
     }
 };
 
-// CREATE — Add a new patient
+// CREATE (with photo upload)
 dataController.create = async (req, res, next) => {
     try {
+        if (req.file) {
+            req.body.photo = '/uploads/patients/' + req.file.filename;
+        }
         res.locals.data.patient = await Patient.create(req.body);
         next();
     } catch (error) {
         res.status(400).send({ message: error.message });
     }
 };
-
 // SHOW — Get patient details
 dataController.show = async (req, res, next) => {
     try {
@@ -58,18 +60,18 @@ dataController.show = async (req, res, next) => {
         res.status(400).send({ message: error.message });
     }
 };
-// Upload patient photo
-dataController.create = async (req, res, next) => {
+// SEARCH by CPR (partial match)
+dataController.searchByCPR = async (req, res) => {
     try {
-        if (req.file) {
-            req.body.photo = '/uploads/patients/' + req.file.filename;
-        }
-
-        res.locals.data.patient = await Patient.create(req.body);
-        next();
+        const searchTerm = req.query.cpr || '';
+        const patients = await Patient.find({
+            cpr: { $regex: searchTerm, $options: 'i' }
+        }).limit(10);
+        res.json(patients);
     } catch (error) {
-        res.status(400).send({ message: error.message });
+        res.status(400).json({ message: error.message });
     }
 };
+
 
 module.exports = dataController;

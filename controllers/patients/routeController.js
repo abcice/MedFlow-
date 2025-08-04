@@ -16,6 +16,8 @@ router.get('/',
     viewController.index             // Render patient list
 );
 
+// search patients by CPR
+router.get('/search/cpr', authDataController.auth, dataController.searchByCPR);
 // New Patient Form
 router.get('/new', 
     authDataController.auth, 
@@ -59,5 +61,6 @@ router.get('/:id',
     dataController.show, 
     viewController.show
 );
+
 
 module.exports = router;

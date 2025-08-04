@@ -22,6 +22,10 @@ function Dashboard(props) {
                 <a href={`/patients/new?token=${token}`} className="btn btn-success">
                     ➕ Add New Patient
                 </a>
+                <a href={`/appointments/new?token=${token}`} className="btn btn-info">
+                    ➕ Create New Appointment
+                </a>
+
                 <a href={`/appointments?token=${token}`} className="btn btn-info">
                     📅 View Appointments
                 </a>

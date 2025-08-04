@@ -120,3 +120,14 @@ exports.deleteUser = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+// ===== Get Doctors =====
+exports.getDoctors = async (req, res) => {
+    try {
+        const doctors = await User.find({ role: 'Doctor' }).select('_id name');
+        res.json(doctors);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+
