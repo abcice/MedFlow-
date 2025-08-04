@@ -12,9 +12,12 @@ const viewController = {
   show(req, res, next){
     res.render('patients/Show', res.locals.data)
   },
-  edit(req, res, next){
-    res.render('patients/Edit', res.locals.data)
-  },
+ edit(req, res) {
+    res.render('patients/Edit', {
+        patient: res.locals.data.patient,
+        token: res.locals.data.token
+    });
+},
   newView(req, res, next){
     res.render('patients/New', res.locals.data)
   },
@@ -26,7 +29,7 @@ const viewController = {
     } 
   },
   redirectShow(req, res, next){
-    res.redirect(RESOURCE_PATH + `/${req.params.id}`)
+    res.redirect(RESOURCE_PATH + `/${req.params.id}?token=${res.locals.data.token}`)
   }
 }
 

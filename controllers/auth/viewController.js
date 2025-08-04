@@ -16,9 +16,10 @@ const viewController = {
     res.redirect('/users/login');
   },
 
-redirectHome(req, res, next) {
-    res.redirect(`/patients?token=${res.locals.data.token}`);
+redirectHome(req, res) {
+    res.redirect(`/dashboard?token=${res.locals.data.token}`);
 }
+
 
 
 

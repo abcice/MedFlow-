@@ -12,7 +12,7 @@ function Layout(props) {
                 {/* Navigation Bar */}
                 <nav>
                     <a href="/">🏠 Home</a>
-                    <a href="/patients">👥 Patients</a>
+                    <a href={`/patients?token=${props.token}`}>👥 Patients</a>
                     <a href="/appointments">📅 Appointments</a>
                     <a href="/users/login">🔐 Login</a>
                 </nav>

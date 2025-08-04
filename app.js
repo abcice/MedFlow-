@@ -5,6 +5,9 @@ const methodOverride = require('method-override');
 
 const userRoutes = require('./controllers/auth/routeController');
 const patientsRoutes = require('./controllers/patients/routeController');
+const dashboardRoutes = require('./controllers/dashboard/routeController');
+
+
 // const appointmentsRoutes = require('./controllers/appointments/routeController')
 const apiRoutes = require('./routes/apiRoutes');
 
@@ -32,5 +35,7 @@ app.use('/patients', patientsRoutes);
 
 // API Routes
 app.use('/api', apiRoutes);
+// Dashboard Route
+app.use('/dashboard', dashboardRoutes);
 
 module.exports = app;

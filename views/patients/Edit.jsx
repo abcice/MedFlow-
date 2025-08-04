@@ -5,10 +5,10 @@ function Edit(props) {
     const patient = props.patient;
 
     return (
-        <Layout>
+        <Layout token={props.token}>
             <h1>✏️ Edit Patient</h1>
 
-            <form action={`/patients/${patient._id}?_method=PUT&token=${props.token}`} method="POST" encType="multipart/form-data">
+            <form action={`/patients/${patient._id}?_method=PUT&token=${props.token}`} method="POST">
                 <div className="form-group">
                     <label htmlFor="name">Full Name:</label>
                     <input 
@@ -110,7 +110,7 @@ function Edit(props) {
                 </div>
 
                 <div className="d-flex gap-2">
-                    <button type="submit" className="btn btn-primary">
+                    <button  type="submit" className="btn btn-primary">
                         💾 Save Changes
                     </button>
                     <a href={`/patients/${patient._id}?token=${props.token}`} className="btn btn-secondary">

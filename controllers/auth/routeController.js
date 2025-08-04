@@ -4,6 +4,8 @@ const router = express.Router();
 const dataController = require('./dataController.js')
 const viewController = require('./viewController.js')
 const patientsViewController = require('../patients/viewController.js')
+const dashboardViewController = require('../dashboard/viewController.js');
+
 
 // SignUp
 
@@ -13,8 +15,10 @@ router.post('/', dataController.createUser, viewController.redirectToLogin)// si
 // Login
 
 router.get('/login', viewController.signIn) // show login form
-router.post('/login', dataController.loginUser, patientsViewController.redirectHome)
-
+router.post('/login', 
+    dataController.loginUser, 
+    dashboardViewController.redirectHome
+);
 // Admin-Only
 // Update User 
 router.put('/:id', dataController.auth, dataController.requireAdmin, dataController.updateUser);

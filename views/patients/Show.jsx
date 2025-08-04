@@ -5,7 +5,7 @@ function Show(props) {
     const patient = props.patient;
 
     return (
-        <Layout patient={patient}>
+        <Layout patient={patient} token={props.token}>
             <h1>🏥 {patient.name}</h1>
 
             <div className="patient-card">

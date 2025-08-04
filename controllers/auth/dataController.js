@@ -16,10 +16,11 @@ exports.auth = async (req, res, next) => {
       throw new Error('No token provided')
     }
     const data = jwt.verify(token, 'secret')
-    const user = await User.findOne({ _id: data._id })
+    const user = await User.findById(data._id)
     if (!user) {
       throw new Error()
     }
+    
     req.user = user
     res.locals.data.token = token
     next()
