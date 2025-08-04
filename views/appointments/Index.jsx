@@ -25,6 +25,7 @@ function Index(props) {
                                 <th>Doctor</th>
                                 <th>Date</th>
                                 <th>Time</th>
+                                <th>Duration (min)</th>
                                 <th>Reason</th>
                                 <th>Actions</th>
                             </tr>
@@ -36,6 +37,7 @@ function Index(props) {
                                     <td>{appt.doctor?.name}</td>
                                     <td>{appt.date ? new Date(appt.date).toLocaleDateString() : ''}</td>
                                     <td>{appt.time || ''}</td>
+                                    <td>{appt.estimatedDuration || '-'}</td>
                                     <td>{appt.reason}</td>
                                     <td className="actions">
                                         <a href={`/appointments/${appt._id}/edit?token=${token}`} className="btn btn-secondary small-btn">

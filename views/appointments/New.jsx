@@ -66,6 +66,18 @@ function New(props) {
                     <label>Time:</label>
                     <input type="time" name="time" required />
                 </div>
+                {/* Estimated Duration */}
+                <div>
+                    <label>Estimated Duration (minutes):</label>
+                    <input 
+                        type="number" 
+                        name="estimatedDuration" 
+                        min="1" 
+                        placeholder="e.g., 30" 
+                        required 
+                    />
+                </div>
+
 
                 <div>
                     <label>Reason:</label>

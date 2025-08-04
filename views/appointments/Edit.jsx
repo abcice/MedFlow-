@@ -55,6 +55,18 @@ function Edit(props) {
                             required 
                         />
                     </div>
+                                        {/* Estimated Duration */}
+                    <div>
+                        <label>Estimated Duration (minutes):</label>
+                        <input 
+                            type="number" 
+                            name="estimatedDuration" 
+                            min="1" 
+                            defaultValue={appointment.estimatedDuration || ''} 
+                            required 
+                        />
+                    </div>
+
 
                     {/* Reason */}
                     <div>

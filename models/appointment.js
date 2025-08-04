@@ -10,7 +10,14 @@ const appointmentSchema = new mongoose.Schema({
         enum: ['Scheduled', 'Completed', 'Cancelled'], 
         default: 'Scheduled' 
     },
-    reason: String, 
+    reason: String,
+
+    // New Field: Estimated Duration
+    estimatedDuration: { 
+        type: Number, // store in minutes
+        min: 5,       // optional validation
+        max: 480      // optional validation (8 hours)
+    }
 }, { timestamps: true });
 
 const Appointment = mongoose.model('Appointment', appointmentSchema);
