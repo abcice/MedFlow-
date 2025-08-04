@@ -72,6 +72,19 @@ dataController.searchByCPR = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
+// SEARCH by Phone (partial match)
+dataController.searchByPhone = async (req, res) => {
+    try {
+        const searchTerm = req.query.phone || '';
+        const patients = await Patient.find({
+            phone: { $regex: searchTerm, $options: 'i' }
+        }).limit(10);
+        res.json(patients);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
 
 
 module.exports = dataController;

@@ -9,12 +9,43 @@ function New(props) {
             <h1>📅 Create New Appointment</h1>
 
             <form action={`/appointments?token=${token}`} method="POST">
-                {/* Patient CPR Search */}
-                <div>
-                    <label>Patient CPR:</label>
-<input type="text" name="patientCPR" placeholder="Enter CPR..." required />
 
-                    <ul id="cprSuggestions"></ul>
+                {/* Patient CPR Search */}
+                <div style={{ position: 'relative' }}>
+                    <label>Patient CPR:</label>
+                    <input
+                        type="text"
+                        id="patientCPR"
+                        name="patientCPR"
+                        placeholder="Enter CPR..."
+                        required
+                        autoComplete="off"
+                    />
+                    <ul id="cprSuggestions" className="suggestions"></ul>
+                </div>
+
+                {/* Search by Phone */}
+                <div style={{ position: 'relative' }}>
+                    <label>Search by Phone:</label>
+                    <input
+                        type="text"
+                        id="patientPhone"
+                        placeholder="Enter phone number..."
+                        autoComplete="off"
+                    />
+                    <ul id="phoneSuggestions" className="suggestions"></ul>
+                </div>
+
+                {/* Auto-filled Name */}
+                <div>
+                    <label>Patient Name:</label>
+                    <input
+                        type="text"
+                        id="patientName"
+                        name="patientName"
+                        readOnly
+                        style={{ backgroundColor: '#f0f0f0' }}
+                    />
                 </div>
 
                 {/* Doctor Dropdown */}
@@ -44,29 +75,83 @@ function New(props) {
                 <a href={`/dashboard?token=${token}`} className="btn btn-secondary">Cancel</a>
             </form>
 
-            {/* Inline Script for Fetching Data */}
+            {/* Styles for Dropdown */}
+            <style>{`
+                .suggestions {
+                    position: absolute;
+                    background: white;
+                    border: 1px solid #ccc;
+                    width: 100%;
+                    max-height: 150px;
+                    overflow-y: auto;
+                    list-style: none;
+                    margin: 0;
+                    padding: 0;
+                    z-index: 10;
+                }
+                .suggestions li {
+                    padding: 8px;
+                    cursor: pointer;
+                    border-bottom: 1px solid #eee;
+                }
+                .suggestions li:hover {
+                    background: #f0f0f0;
+                }
+            `}</style>
+
+            {/* Inline Script */}
             <script dangerouslySetInnerHTML={{
                 __html: `
+                    const token = "${token}";
+
                     async function searchCPR() {
                         const input = document.getElementById('patientCPR').value;
                         const suggestionsList = document.getElementById('cprSuggestions');
                         suggestionsList.innerHTML = '';
                         if (input.length < 2) return;
-                        const res = await fetch('/patients/search/cpr?cpr=' + input + '&token=${token}');
+                        const res = await fetch('/patients/search/cpr?cpr=' + input + '&token=' + token);
                         const data = await res.json();
                         data.forEach(patient => {
                             const li = document.createElement('li');
                             li.textContent = patient.cpr + ' - ' + patient.name;
                             li.onclick = () => {
                                 document.getElementById('patientCPR').value = patient.cpr;
+                                document.getElementById('patientPhone').value = patient.phone || '';
+                                document.getElementById('patientName').value = patient.name;
                                 suggestionsList.innerHTML = '';
                             };
                             suggestionsList.appendChild(li);
                         });
                     }
 
+                    async function searchPhone() {
+                        const input = document.getElementById('patientPhone').value;
+                        const suggestionsList = document.getElementById('phoneSuggestions');
+                        suggestionsList.innerHTML = '';
+                        if (input.length < 2) return;
+                        const res = await fetch('/patients/search/phone?phone=' + input + '&token=' + token);
+                        const data = await res.json();
+                        data.forEach(patient => {
+                            const li = document.createElement('li');
+                            li.textContent = patient.phone + ' - ' + patient.name;
+                            li.onclick = () => {
+                                document.getElementById('patientCPR').value = patient.cpr;
+                                document.getElementById('patientPhone').value = patient.phone;
+                                document.getElementById('patientName').value = patient.name;
+                                suggestionsList.innerHTML = '';
+                            };
+                            suggestionsList.appendChild(li);
+                        });
+                    }
+
+                    document.addEventListener('DOMContentLoaded', () => {
+                        document.getElementById('patientCPR').addEventListener('input', searchCPR);
+                        document.getElementById('patientPhone').addEventListener('input', searchPhone);
+                        loadDoctors();
+                    });
+
                     async function loadDoctors() {
-                        const res = await fetch('/users/doctors?token=${token}');
+                        const res = await fetch('/users/doctors?token=' + token);
                         const doctors = await res.json();
                         const select = document.getElementById('doctorSelect');
                         doctors.forEach(doc => {
@@ -76,8 +161,6 @@ function New(props) {
                             select.appendChild(option);
                         });
                     }
-
-                    loadDoctors();
                 `
             }} />
         </Layout>

@@ -18,6 +18,10 @@ router.get('/',
 
 // search patients by CPR
 router.get('/search/cpr', authDataController.auth, dataController.searchByCPR);
+
+// search patients by Phone
+router.get('/search/phone', authDataController.auth, dataController.searchByPhone);
+
 // New Patient Form
 router.get('/new', 
     authDataController.auth, 
