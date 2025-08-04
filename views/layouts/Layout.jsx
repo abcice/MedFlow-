@@ -36,11 +36,14 @@ function Layout(props) {
                         {isLoggedIn && <a href={`/patients?token=${props.token}`}>👥 Patients</a>}
                         {isLoggedIn && <a href={`/appointments?token=${props.token}`}>📅 Appointments</a>}
 
-                        {isLoggedIn ? (
-                            <a href="/users/logout" className="logout-btn">🔓 Logout</a>
-                        ) : (
-                            <a href="/users/login">🔐 Login</a>
+                        {!props.hideAuthLinks && (
+                            isLoggedIn ? (
+                                <a href="/users/logout" className="logout-btn">🔓 Logout</a>
+                            ) : (
+                                <a href="/users/login">🔐 Login</a>
+                            )
                         )}
+
                     </div>
                 </nav>
 
