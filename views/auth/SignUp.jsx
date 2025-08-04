@@ -4,6 +4,8 @@ const Layout = require('../layouts/Layout.jsx');
 function SignUp(props) {
     return (
         <Layout>
+            <div className="container">
+
             <h1>📝 MedFlow Sign Up</h1>
 
             <form action="/users" method="POST">
@@ -65,6 +67,7 @@ function SignUp(props) {
 
             <div>
                 <p>Already have an account? <a href="/users/login">Sign in here</a></p>
+            </div>
             </div>
         </Layout>
     );

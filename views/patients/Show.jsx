@@ -6,6 +6,8 @@ function Show(props) {
 
     return (
         <Layout patient={patient} token={props.token}>
+            <div className="container">
+
             <h1>🏥 {patient.name}</h1>
 
             <div className="patient-card">
@@ -48,6 +50,7 @@ function Show(props) {
                         </button>
                     </form>
                 </div>
+            </div>
             </div>
         </Layout>
     );

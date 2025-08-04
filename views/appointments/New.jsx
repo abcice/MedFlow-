@@ -6,6 +6,7 @@ function New(props) {
 
     return (
         <Layout token={token}>
+             <div className="container">
             <h1>📅 Create New Appointment</h1>
 
             <form action={`/appointments?token=${token}`} method="POST">
@@ -163,6 +164,7 @@ function New(props) {
                     }
                 `
             }} />
+            </div>
         </Layout>
     );
 }

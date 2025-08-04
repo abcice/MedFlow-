@@ -4,6 +4,7 @@ const Layout = require('../layouts/Layout');
 function New(props) {
     return (
         <Layout token={props.token}>
+            <div className="container">
             <h1>🏥 Add New Patient</h1>
 
             {}
@@ -118,6 +119,7 @@ function New(props) {
                     </a>
                 </div>
             </form>
+            </div>
         </Layout>
     );
 }

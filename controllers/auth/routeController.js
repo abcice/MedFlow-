@@ -19,6 +19,12 @@ router.post('/login',
     dataController.loginUser, 
     dashboardViewController.redirectHome
 );
+//logout
+router.get('/logout', (req, res) => {
+    // Just redirect to login without a token
+    res.redirect('/users/login');
+});
+
 //select doctors
 router.get('/doctors', dataController.auth, dataController.getDoctors);
 

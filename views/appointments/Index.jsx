@@ -4,6 +4,7 @@ const Layout = require('../layouts/Layout');
 function Index(props) {
     return (
         <Layout token={props.token}>
+            <div className="container">
             <h1>📅 All Appointments</h1>
 
             <a href={`/appointments/new?token=${props.token}`} className="btn btn-primary">
@@ -33,6 +34,7 @@ function Index(props) {
                 </tbody>
 
             </table>
+            </div>
         </Layout>
     );
 }

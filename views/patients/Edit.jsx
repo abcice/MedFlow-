@@ -6,6 +6,7 @@ function Edit(props) {
 
     return (
         <Layout token={props.token}>
+            <div className="container">
             <h1>✏️ Edit Patient</h1>
 
             <form action={`/patients/${patient._id}?_method=PUT&token=${props.token}`} method="POST">
@@ -118,6 +119,7 @@ function Edit(props) {
                     </a>
                 </div>
             </form>
+            </div>
         </Layout>
     );
 }

@@ -6,6 +6,8 @@ function Index(props) {
 
     return (
         <Layout token={props.token}>
+                <div className="container">
+
 
             <h1>🏥 All Patients</h1>
 
@@ -55,6 +57,7 @@ function Index(props) {
                     ))}
                 </div>
             )}
+            </div>
         </Layout>
     );
 }
