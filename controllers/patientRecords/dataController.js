@@ -3,6 +3,9 @@ const Patient = require('../../models/patient');
 const User = require('../../models/user');
 const Prescription = require('../../models/prescription');
 const Request = require('../../models/request');
+const SickLeave = require('../../models/sickLeave');
+const ReferralLetter = require('../../models/referralLetter');
+
 
 const dataController = {};
 
@@ -210,6 +213,73 @@ dataController.createRequest = async (req, res, next) => {
         res.status(400).send(error.message);
     }
 };
+// ========== SICK LEAVE ==========
+dataController.newSickLeaveView = async (req, res, next) => {
+    try {
+        const patient = await Patient.findById(req.query.patient);
+        if (!patient) return res.status(404).send('Patient not found');
+        res.locals.data.patient = patient;
+        next();
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+};
+
+dataController.createSickLeave = async (req, res) => {
+    try {
+        await SickLeave.create({
+            patient: req.params.patientId,
+            doctor: req.user._id,
+            reason: req.body.reason,
+            durationDays: req.body.durationDays
+        });
+        // Redirect back to the "new record" page, not history
+        res.redirect(`/patientRecords/${req.params.patientId}/history/new?token=${req.query.token}`);
+    } catch (err) {
+        res.status(400).send(err.message);
+    }
+};
+
+
+
+// ========== REFERRAL LETTER ==========
+dataController.newReferralLetterView = async (req, res, next) => {
+    try {
+        const patient = await Patient.findById(req.query.patient);
+        if (!patient) return res.status(404).send('Patient not found');
+        res.locals.data.patient = patient;
+        next();
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+};
+
+dataController.createReferralLetter = async (req, res) => {
+    try {
+        await ReferralLetter.create({
+            patient: req.params.patientId,
+            doctor: req.user._id,
+            referredTo: req.body.referredTo,
+            reason: req.body.reason
+        });
+        res.redirect(`/patientRecords/${req.params.patientId}/history?token=${req.query.token}`);
+    } catch (err) {
+        res.status(400).send(err.message);
+    }
+};
+
+dataController.loadPatient = async (req, res, next) => {
+    try {
+        const patient = await Patient.findById(req.params.patientId);
+        if (!patient) return res.status(404).send('Patient not found');
+        res.locals.data.patient = patient;
+        res.locals.data.token = req.query.token || '';
+        next();
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+};
+
 
 
 

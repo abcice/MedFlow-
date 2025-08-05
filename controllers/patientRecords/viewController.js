@@ -20,21 +20,31 @@ const viewController = {
         res.render('patientRecords/Show', { patient, records: filteredRecords, token });
     },
 
-    async newView(req, res) {
-        try {
-            const patient = await Patient.findById(req.params.patientId);
-            if (!patient) return res.status(404).send('Patient not found');
+async newView(req, res) {
+    try {
+        const patient = await Patient.findById(req.params.patientId);
+        if (!patient) return res.status(404).send('Patient not found');
 
-            res.render('patientRecords/New', {
-                patient,
-                token: res.locals.data.token,
-                currentUser: req.user,
-                favoritePrescriptions: []
-            });
-        } catch (err) {
-            res.status(500).send(err.message);
-        }
-    },
+        const getIds = (name) => req.query[name] ? [].concat(req.query[name]) : [];
+
+        res.render('patientRecords/New', {
+            patient,
+            token: req.query.token || '',
+            currentUser: req.user,
+            favoritePrescriptions: [],
+            labRequestIds: getIds('labRequestIds'),
+            radiologyRequestIds: getIds('radiologyRequestIds'),
+            sickLeaveIds: getIds('sickLeaveIds'),
+            referralLetterIds: getIds('referralLetterIds'),
+            previousFormData: req.query
+        });
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+},
+
+
+
 
     redirectToHistory(req, res) {
         res.redirect(`/patientRecords/${req.body.patient}/history?token=${res.locals.data.token}`);
@@ -80,9 +90,29 @@ const viewController = {
         }
     },
 
-    redirectToNewRecord(req, res) {
+
+      redirectToNewRecord(req, res) {
         res.redirect(`/patientRecords/${req.params.patientId}/history/new?token=${req.query.token}`);
+    },
+
+    // Sick Leave Form
+    sickLeaveNewView(req, res) {
+        res.render('patientRecords/SickLeaveNew', {
+            patient: res.locals.data.patient,
+            token: res.locals.data.token,
+            currentUser: req.user
+        });
+    },
+
+    // Referral Letter Form
+    referralLetterNewView(req, res) {
+        res.render('patientRecords/ReferralLetterNew', {
+            patient: res.locals.data.patient,
+            token: res.locals.data.token,
+            currentUser: req.user
+        });
     }
+
 };
 
 module.exports = viewController;

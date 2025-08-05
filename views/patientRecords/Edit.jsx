@@ -2,23 +2,39 @@ const React = require('react');
 const Layout = require('../layouts/Layout');
 
 function Edit(props) {
-    const { patient, record, token, currentUser } = props;
-
-    // Check if logged-in doctor can see the private note
-    const canViewPrivateNote =
-        currentUser &&
-        currentUser.role === 'Doctor' &&
-        record.doctor &&
-        record.doctor._id.toString() === currentUser._id.toString();
+    const {
+        record,
+        patient,
+        token,
+        currentUser,
+        favoritePrescriptions = []
+    } = props;
 
     return (
         <Layout token={token}>
             <h1>✏️ Edit Medical Record</h1>
-            <p><strong>Patient:</strong> {patient.name} ({patient.cpr})</p>
 
-            <form action={`/patientRecords/${record._id}?_method=PUT&token=${token}`} method="POST">
+            {/* Patient Info */}
+            <div style={{ display: 'flex', gap: '20px', alignItems: 'center', marginBottom: '20px' }}>
+                {patient.photo && (
+                    <img src={patient.photo} alt={`${patient.name}'s photo`} style={{ width: '120px', borderRadius: '8px' }} />
+                )}
+                <div>
+                    <h2>{patient.name}</h2>
+                    <p><strong>CPR:</strong> {patient.cpr}</p>
+                    <p><strong>Phone:</strong> {patient.phone || 'N/A'}</p>
+                    <p><strong>Gender:</strong> {patient.gender}</p>
+                    {patient.blacklisted && <p style={{ color: 'red' }}>🚫 Blacklisted</p>}
+                </div>
+            </div>
+
+            <form action={`/patientRecords/saveDraft?token=${token}`} method="POST">
+                <input type="hidden" name="recordId" value={record._id} />
                 <input type="hidden" name="patient" value={patient._id} />
-                <input type="hidden" name="doctor" value={record.doctor?._id || ''} />
+                <input type="hidden" name="doctor" value={currentUser._id} />
+
+                <label>Doctor:</label>
+                <input type="text" value={currentUser.name} disabled />
 
                 <label>Complaint:</label>
                 <textarea name="complaint" defaultValue={record.complaint}></textarea>
@@ -32,17 +48,18 @@ function Edit(props) {
                 <label>Treatment Plan:</label>
                 <textarea name="treatmentPlan" defaultValue={record.treatmentPlan}></textarea>
 
-                {canViewPrivateNote && (
-                    <>
-                        <label>Private Note (Doctor only):</label>
-                        <textarea name="privateNote" defaultValue={record.privateNote}></textarea>
-                    </>
-                )}
+                {/* Action Buttons */}
+                <div style={{ marginTop: '20px' }}>
+                    <button type="submit" name="action" value="Lab" className="btn btn-secondary">🧪 Lab Request</button>
+                    <button type="submit" name="action" value="Radiology" className="btn btn-secondary">🩻 Radiology Request</button>
+                    <button type="submit" name="action" value="SickLeave" className="btn btn-secondary">📝 Sick Leave</button>
+                    <button type="submit" name="action" value="ReferralLetter" className="btn btn-secondary">📄 Referral Letter</button>
+                </div>
 
-                <button type="submit" className="btn btn-primary">💾 Save Changes</button>
-                <a href={`/patients/${patient._id}/history?token=${token}`} className="btn btn-secondary">
-                    ← Back to History
-                </a>
+                <div style={{ marginTop: '20px' }}>
+                    <button type="submit" name="action" value="SaveOnly" className="btn btn-primary">💾 Save</button>
+                    <a href={`/patientRecords/${patient._id}/history?token=${token}`} className="btn btn-secondary">← Go Back</a>
+                </div>
             </form>
         </Layout>
     );

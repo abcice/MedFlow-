@@ -13,7 +13,9 @@ const patientSchema = new mongoose.Schema({
 
     records: [{ type: mongoose.Schema.Types.ObjectId, ref: 'PatientRecord' }],
 
-    photo: { type: String, default: '/images/default-patient.png' }
+    photo: { type: String, default: '/images/default-patient.png' },
+    blacklisted: { type: Boolean, default: false }
+
 }, { timestamps: true });
 
 const Patient = mongoose.model('Patient', patientSchema);
