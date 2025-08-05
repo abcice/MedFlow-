@@ -46,14 +46,15 @@ function New(props) {
                 {/* Requests Section */}
                 <div style={{ marginTop: '20px' }}>
                     <h3>Requests</h3>
-                    <button type="button" className="btn btn-secondary" 
-                        onClick={() => window.location.href = `/labRequests/new?patient=${patient._id}&token=${token}`}>
+                    <button type="button" className="btn btn-secondary"
+                        onClick={() => window.location.href = `/patientRecords/${patient._id}/history/newRequest?type=Lab&token=${token}`}>
                         🧪 Lab Request
                     </button>
-                    <button type="button" className="btn btn-secondary" 
-                        onClick={() => window.location.href = `/radiologyRequests/new?patient=${patient._id}&token=${token}`}>
+                    <button type="button" className="btn btn-secondary"
+                        onClick={() => window.location.href = `/patientRecords/${patient._id}/history/newRequest?type=Radiology&token=${token}`}>
                         🩻 Radiology Request
                     </button>
+
                 </div>
 
                 {/* Prescriptions Section */}

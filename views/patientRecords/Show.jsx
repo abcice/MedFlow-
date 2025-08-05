@@ -8,18 +8,37 @@ function Show(props) {
         <Layout token={token}>
             <h1>🩺 {patient.name} - Medical History</h1>
             <p><strong>CPR:</strong> {patient.cpr}</p>
-            {patient.photo && <img src={patient.photo} alt="Patient" style={{ width: '120px', borderRadius: '8px' }} />}
+            {patient.photo && (
+                <img 
+                    src={patient.photo} 
+                    alt="Patient" 
+                    style={{ width: '120px', borderRadius: '8px' }} 
+                />
+            )}
 
-            <a href={`/patientRecords/${patient._id}/history/new?token=${token}`} className="btn btn-primary">
-                ➕ Add New Visit
-            </a>
+            {/* Buttons above the history */}
+            <div style={{ marginBottom: '15px' }}>
+                <a 
+                    href={`/patientRecords/${patient._id}/history/new?token=${token}`} 
+                    className="btn btn-primary"
+                    style={{ marginRight: '10px' }}
+                >
+                    ➕ Add New Visit
+                </a>
 
+                <a 
+                    href={`/patients/${patient._id}?token=${token}`} 
+                    className="btn btn-secondary"
+                >
+                    ← Go Back
+                </a>
+            </div>
 
             {records.length === 0 ? (
                 <p>No records yet.</p>
             ) : (
                 records.map((rec) => (
-                    <div key={rec._id} className="card" style={{ marginTop: '15px' }}>
+                    <div key={rec._id} className="card" style={{ marginTop: '15px', padding: '10px' }}>
                         <h3>Visit: {new Date(rec.visitDate).toLocaleDateString()}</h3>
                         <p><strong>Doctor:</strong> Dr. {rec.doctor?.name}</p>
                         <p><strong>Complaint:</strong> {rec.complaint}</p>
@@ -45,6 +64,16 @@ function Show(props) {
                         {rec.privateNote && (
                             <p style={{ color: 'red' }}><strong>Private Note:</strong> {rec.privateNote}</p>
                         )}
+
+                        {/* Edit button for each record */}
+                        <div style={{ marginTop: '10px' }}>
+                            <a 
+                                href={`/patientRecords/${rec._id}/edit?token=${token}`} 
+                                className="btn btn-warning"
+                            >
+                                ✏️ Edit This Visit
+                            </a>
+                        </div>
                     </div>
                 ))
             )}

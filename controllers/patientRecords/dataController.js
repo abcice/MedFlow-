@@ -186,6 +186,30 @@ dataController.updateRecord = async (req, res, next) => {
         res.status(400).json({ message: error.message });
     }
 };
+// Create a new Lab or Radiology request
+dataController.createRequest = async (req, res, next) => {
+    try {
+        const patient = await Patient.findById(req.params.patientId);
+        if (!patient) return res.status(404).send('Patient not found');
+
+        const doctor = req.user;
+        if (!doctor || doctor.role !== 'Doctor') {
+            return res.status(403).send('Only doctors can create requests');
+        }
+
+        const newRequest = await Request.create({
+            patient: patient._id,
+            doctor: doctor._id,
+            type: req.query.type, // Lab or Radiology from URL
+            details: req.body.details
+        });
+
+        res.locals.data.request = newRequest;
+        next();
+    } catch (error) {
+        res.status(400).send(error.message);
+    }
+};
 
 
 

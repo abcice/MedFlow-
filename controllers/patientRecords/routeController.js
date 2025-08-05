@@ -53,6 +53,19 @@ router.put('/:id',
     dataController.updateRecord,
     viewController.redirectToHistory
 );
+// New Lab or Radiology request form
+router.get('/:patientId/history/newRequest',
+    authDataController.auth,
+    viewController.newRequestView
+);
+
+// Save Lab or Radiology request
+router.post('/:patientId/history/newRequest',
+    authDataController.auth,
+    dataController.createRequest,
+    viewController.redirectToNewRecord
+);
+
 
 
 module.exports = router;
