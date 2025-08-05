@@ -43,19 +43,23 @@ function New(props) {
                 <label>Treatment Plan:</label>
                 <textarea name="treatmentPlan"></textarea>
 
-                {/* Requests Section */}
+                            {/* Requests Section */}
                 <div style={{ marginTop: '20px' }}>
                     <h3>Requests</h3>
-                    <button type="button" className="btn btn-secondary"
-                        onClick={() => window.location.href = `/patientRecords/${patient._id}/history/newRequest?type=Lab&token=${token}`}>
+                    <a
+                        href={`/patientRecords/${patient._id}/history/newRequest?type=Lab&token=${token}`}
+                        className="btn btn-secondary"
+                    >
                         🧪 Lab Request
-                    </button>
-                    <button type="button" className="btn btn-secondary"
-                        onClick={() => window.location.href = `/patientRecords/${patient._id}/history/newRequest?type=Radiology&token=${token}`}>
+                    </a>
+                    <a
+                        href={`/patientRecords/${patient._id}/history/newRequest?type=Radiology&token=${token}`}
+                        className="btn btn-secondary"
+                    >
                         🩻 Radiology Request
-                    </button>
-
+                    </a>
                 </div>
+
 
                 {/* Prescriptions Section */}
                 <div style={{ marginTop: '20px' }}>
@@ -122,14 +126,13 @@ function New(props) {
                 {/* Buttons */}
                 <div style={{ marginTop: '20px' }}>
                     <button type="submit" className="btn btn-primary">💾 Save</button>
-                    <button type="button" className="btn btn-secondary"
-                        onClick={(e) => {
-                            if (confirm('Are you sure you want to go back? Unsaved changes will be lost.')) {
-                                window.history.back();
-                            }
-                        }}>
+                    <a
+                        href={`/patientRecords/${patient._id}/history?token=${token}`}
+                        className="btn btn-secondary"
+                    >
                         ← Go Back
-                    </button>
+                    </a>
+
                 </div>
             </form>
         </Layout>
