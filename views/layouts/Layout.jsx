@@ -13,6 +13,7 @@ function Layout(props) {
             <head>
                 <title>MedFlow</title>
                 <link rel="stylesheet" href="/styles.css" />
+                <link rel="stylesheet" href="/css/react-big-calendar.css" />
 
                 {/* Fonts */}
                 <link rel="preconnect" href="https://fonts.googleapis.com" />

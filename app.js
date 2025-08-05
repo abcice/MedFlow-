@@ -12,6 +12,8 @@ const appointmentsRoutes = require('./controllers/appointments/routeController')
 const apiRoutes = require('./routes/apiRoutes');
 const passToken = require('./middleware/passToken');
 
+const patientRecordRoutes = require('./controllers/patientRecords/routeController');
+
 
 const app = express();
 
@@ -35,6 +37,7 @@ app.use(passToken);
 app.use('/users', userRoutes);    
 app.use('/patients', patientsRoutes);
 app.use('/appointments', appointmentsRoutes);
+app.use('/patientRecords', patientRecordRoutes);
 
 // API Routes
 app.use('/api', apiRoutes);

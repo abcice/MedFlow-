@@ -3,7 +3,6 @@ const Layout = require('../layouts/Layout');
 const { Calendar, Views, dateFnsLocalizer } = require('react-big-calendar');
 const { format, parse, startOfWeek, getDay } = require('date-fns');
 
-require('react-big-calendar/lib/css/react-big-calendar.css');
 
 const locales = {
     'en-US': require('date-fns/locale/en-US')

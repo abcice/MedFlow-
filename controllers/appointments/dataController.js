@@ -4,17 +4,49 @@ const User = require('../../models/user');
 
 const dataController = {};
 
-// INDEX — Get all appointments
+// INDEX — Get doctors, appointments, and filters for schedule
 dataController.index = async (req, res, next) => {
     try {
-        res.locals.data.appointments = await Appointment.find({})
+        let { date, doctor } = req.query;
+
+        // Default to today if no date provided
+        const selectedDate = date ? new Date(date) : new Date();
+        selectedDate.setHours(0, 0, 0, 0);
+
+        const startOfDay = new Date(selectedDate);
+        const endOfDay = new Date(selectedDate);
+        endOfDay.setHours(23, 59, 59, 999);
+
+        // Fetch only doctors
+        const doctors = await User.find({ role: 'Doctor' }).select('_id name role');
+
+        // Appointment filter
+        const filter = {
+            startDateTime: { $gte: startOfDay, $lte: endOfDay }
+        };
+        if (doctor) {
+            filter.doctor = doctor;
+        }
+
+        // Fetch appointments
+        const appointments = await Appointment.find(filter)
             .populate('patient', 'name cpr')
-            .populate('doctor', 'name role');
+            .populate('doctor', 'name role')
+            .sort({ startDateTime: 1 });
+
+        // Pass data to view
+        res.locals.data.doctors = doctors;
+        res.locals.data.appointments = appointments;
+        res.locals.data.selectedDate = selectedDate.toISOString().split('T')[0];
+        res.locals.data.selectedDoctor = doctor || '';
+        res.locals.data.token = req.query.token || '';
+
         next();
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 };
+
 
 // CREATE — Create appointment using patient CPR
 dataController.create = async (req, res, next) => {

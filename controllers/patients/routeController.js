@@ -4,6 +4,8 @@ const upload = require('../../middleware/upload.js');
 const viewController = require('./viewController.js');
 const dataController = require('./dataController.js');
 const authDataController = require('../auth/dataController.js');
+const patientRecordsDataController = require('../patientRecords/dataController');
+const patientRecordsViewController = require('../patientRecords/viewController');
 
 // =========================
 // Patients Routes
@@ -64,6 +66,12 @@ router.get('/:id',
     authDataController.auth, 
     dataController.show, 
     viewController.show
+);
+// View Patient Medical History
+router.get('/:id/history',
+    authDataController.auth,
+    patientRecordsDataController.getHistory,
+    patientRecordsViewController.history
 );
 
 

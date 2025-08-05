@@ -7,27 +7,32 @@ const VALID_ROLES = ['Admin', 'Doctor', 'FrontDesk', 'Pharmacist', 'LabTech', 'R
 // ===== Auth Middleware  ===== 
 exports.auth = async (req, res, next) => {
   try {
-    let token
-    if(req.query.token){
-      token = req.query.token
-    }else if(req.header('Authorization')){
-      token = req.header('Authorization').replace('Bearer ', '')
-    }else {
-      throw new Error('No token provided')
+    let token;
+    if (req.query.token) {
+      token = req.query.token;
+    } else if (req.header('Authorization')) {
+      token = req.header('Authorization').replace('Bearer ', '');
+    } else {
+      throw new Error('No token provided');
     }
-    const data = jwt.verify(token, 'secret')
-    const user = await User.findById(data._id)
+
+    const data = jwt.verify(token, 'secret');
+    const user = await User.findById(data._id);
     if (!user) {
-      throw new Error()
+      throw new Error('User not found');
     }
     
-    req.user = user
-    res.locals.data.token = token
-    next()
+    req.user = user;
+    res.locals.data.token = token;
+    res.locals.data.currentUser = user; // ✅ Store logged-in user for views/controllers
+
+    next();
   } catch (error) {
-    res.status(401).send('Not authorized')
+    console.error(error);
+    res.status(401).send('Not authorized');
   }
-} // check
+};
+ // check
 
 // ===== Admin Check  =====
 exports.requireAdmin = (req, res, next) => {

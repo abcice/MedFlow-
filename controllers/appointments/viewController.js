@@ -9,15 +9,15 @@ const viewController = {
     newView(req, res) {
         res.render('appointments/New', { token: res.locals.data.token });
     },
-//     schedule(req, res) {
-//     res.render('appointments/Schedule', {
-//         doctors: res.locals.data.doctors,
-//         appointments: res.locals.data.appointments,
-//         selectedDate: res.locals.data.selectedDate,
-//         selectedDoctor: res.locals.data.selectedDoctor,
-//         token: res.locals.data.token
-//     });
-// }
+    schedule(req, res) {
+    res.render('appointments/Schedule', {
+        doctors: res.locals.data.doctors,
+        appointments: res.locals.data.appointments,
+        selectedDate: res.locals.data.selectedDate,
+        selectedDoctor: res.locals.data.selectedDoctor,
+        token: res.locals.data.token
+    });
+},
 
 
     redirectHome(req, res) {
