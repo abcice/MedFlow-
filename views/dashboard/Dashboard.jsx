@@ -17,6 +17,8 @@ function Dashboard(props) {
                     <a href={`/patients/new?token=${token}`} className="dashboard-btn btn-primary">➕ Add New Patient</a>
                     <a href={`/appointments?token=${token}`} className="dashboard-btn btn-primary">📅 View Appointments</a>
                     <a href={`/appointments/new?token=${token}`} className="dashboard-btn btn-primary">➕ Create Appointment</a>
+                    <a href={`/appointments/schedule?token=${token}`} className="btn btn-primary dashboard-btn">📅 View Schedule</a>
+
                 </div>
             </div>
         </Layout>

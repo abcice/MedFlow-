@@ -3,7 +3,7 @@ const router = express.Router()
 const userApiController = require('../controllers/auth/apiController')
 const patientApiController = require('../controllers/patients/apiController')
 const patientDataController = require('../controllers/patients/dataController')
-// const appointmentApiController = require('../controllers/appointment/apiController')
+const appointmentApiController = require('../controllers/appointments/apiController')
 const userDataController = require('../controllers/auth/dataController')
 
 

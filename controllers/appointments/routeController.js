@@ -41,6 +41,12 @@ router.put('/:id',
     dataController.update,       // ✅ Move logic into dataController
     viewController.redirectHome
 );
+// //schdule 
+// router.get('/schedule',
+//     authDataController.auth,
+//     dataController.index, // already fetches doctors, appointments, date, doctor
+//     viewController.schedule
+// );
 
 // Delete Appointment
 router.delete('/:id', 
