@@ -241,6 +241,34 @@ router.get('/referralLetters/:id/official', authDataController.auth, async (req,
     if (!letter) return res.status(404).send('Referral letter not found');
     res.render('medicalRequests/ReferralLetterOfficial', { letter, token: req.query.token, userRole: req.user.role });
 });
+//====view lab request details
+router.get('/lab/:id', authDataController.auth, async (req, res) => {
+    try {
+        const request = await Request.findById(req.params.id)
+            .populate('patient')
+            .populate('doctor')
+            .lean();
+        if (!request || request.type !== 'Lab') return res.status(404).send('Lab request not found');
+        res.render('medicalRequests/LabRequestDetail', { request, token: req.query.token });
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
+
+//====view radiology request details
+router.get('/radiology/:id', authDataController.auth, async (req, res) => {
+    try {
+        const request = await Request.findById(req.params.id)
+            .populate('patient')
+            .populate('doctor')
+            .lean();
+        if (!request || request.type !== 'Radiology') return res.status(404).send('Radiology request not found');
+        res.render('medicalRequests/RadiologyRequestDetail', { request, token: req.query.token });
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
+
 
 
 module.exports = router;

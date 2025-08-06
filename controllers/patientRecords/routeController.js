@@ -10,6 +10,7 @@ const PatientRecord = require('../../models/patientRecord');
 const Request = require('../../models/request');
 const SickLeave = require('../../models/sickLeave');
 const ReferralLetter = require('../../models/referralLetter');
+const moment = require('moment');
 
 // =============================
 // Patient History
@@ -212,7 +213,7 @@ router.get('/:patientId/editRequest/:requestId', authDataController.auth, async 
         res.render('patientRecords/EditRequest', {
             request,
             token: req.query.token,
-            recordId: req.query.recordId,
+            recordId: req.query.recordId, // ✅ pass this to the view
             prescriptionData: {
                 drugName: req.query.drugName || '',
                 dose: req.query.dose || '',
@@ -226,6 +227,7 @@ router.get('/:patientId/editRequest/:requestId', authDataController.auth, async 
         res.status(500).send(err.message);
     }
 });
+
 
 router.post('/:patientId/editRequest/:requestId', authDataController.auth, async (req, res) => {
     try {
@@ -253,26 +255,30 @@ router.get('/:patientId/editSickLeave/:sickLeaveId', authDataController.auth, as
         const sickLeave = await SickLeave.findById(req.params.sickLeaveId).populate('patient');
         if (!sickLeave) return res.status(404).send('Sick leave not found');
 
-        res.render('patientRecords/EditSickLeave', {
-            sickLeave,
-            token: req.query.token,
-            recordId: req.query.recordId,
-            prescriptionData: {
-                drugName: req.query.drugName || '',
-                dose: req.query.dose || '',
-                route: req.query.route || '',
-                frequency: req.query.frequency || '',
-                duration: req.query.duration || '',
-                notes: req.query.notes || ''
-            }
+        const latestRecord = await PatientRecord.findOne({ patient: sickLeave.patient._id }).sort({ createdAt: -1 }).lean();
+
+
+
+        if (!sickLeave) return res.status(404).send('Sick leave not found');
+
+            res.render('patientRecords/EditSickLeave', {
+        sickLeave,
+        token: req.query.token,
+        recordId: req.query.recordId,  // <== THIS LINE IS CRITICAL
+        latestDiagnosis: latestRecord?.diagnosis || '',
+        currentUser: req.user
         });
+
     } catch (err) {
         res.status(500).send(err.message);
     }
 });
 
+
 router.post('/:patientId/editSickLeave/:sickLeaveId', authDataController.auth, async (req, res) => {
     try {
+        const recordId = req.body.recordId || req.query.recordId;
+
         await SickLeave.findByIdAndUpdate(req.params.sickLeaveId, req.body);
         const prescriptionParams = new URLSearchParams({
             token: req.query.token,
@@ -283,8 +289,11 @@ router.post('/:patientId/editSickLeave/:sickLeaveId', authDataController.auth, a
             duration: req.query.duration || '',
             notes: req.query.notes || ''
         }).toString();
-        res.redirect(`/patientRecords/${req.query.recordId}/edit?${prescriptionParams}`);
-    } catch (err) {
+if (!recordId) {
+  return res.status(400).send("Missing recordId in query parameters.");
+}
+
+res.redirect(`/patientRecords/${recordId}/edit?${prescriptionParams}`);    } catch (err) {
         res.status(500).send(err.message);
     }
 });
@@ -318,6 +327,10 @@ router.get('/:patientId/editReferralLetter/:referralLetterId', authDataControlle
 router.post('/:patientId/editReferralLetter/:referralLetterId', authDataController.auth, async (req, res) => {
     try {
         await ReferralLetter.findByIdAndUpdate(req.params.referralLetterId, req.body);
+
+        const recordId = req.query.recordId || req.body.recordId;
+        if (!recordId) return res.status(400).send("Missing recordId in request.");
+
         const prescriptionParams = new URLSearchParams({
             token: req.query.token,
             drugName: req.query.drugName || '',
@@ -327,11 +340,13 @@ router.post('/:patientId/editReferralLetter/:referralLetterId', authDataControll
             duration: req.query.duration || '',
             notes: req.query.notes || ''
         }).toString();
-        res.redirect(`/patientRecords/${req.query.recordId}/edit?${prescriptionParams}`);
+
+        res.redirect(`/patientRecords/${recordId}/edit?${prescriptionParams}`);
     } catch (err) {
         res.status(500).send(err.message);
     }
 });
+
 
 // =============================
 // Favorites
@@ -441,6 +456,39 @@ router.get('/referralLetters', authDataController.auth, async (req, res) => {
         .lean();
     res.render('patientRecords/ReferralLettersList', { referralLetters, token: req.query.token });
 });
+// Create New Sick Leave
+router.post('/patientRecords/:id/history/newSickLeave', authDataController.auth, async (req, res) => {
+    try {
+        const { reason, startDate, durationDays, additionalNotes } = req.body;
+
+        if (!startDate || !durationDays || !reason) {
+            return res.status(400).send("Start date, reason, and duration are required.");
+        }
+        console.log("New SickLeave for patient ID:", req.params.id);
+
+
+        // Get latest diagnosis
+        const latestRecord = await PatientRecord.findOne({ patient: req.params.id }).sort({ createdAt: -1 });
+        const diagnosis = latestRecord?.diagnosis || reason; // fallback to input if no record
+
+        const sickLeave = new SickLeave({
+            patient: req.params.id,
+            doctor: req.user._id,
+            reason: diagnosis,
+            startDate,
+            durationDays,
+            additionalNotes
+        });
+
+        await sickLeave.save();
+
+        res.redirect(`/patientRecords/${req.params.id}/history?token=${req.query.token}`);
+    } catch (err) {
+        console.error(err);
+        res.status(400).send("Failed to create sick leave: " + err.message);
+    }
+});
+
 
 
 

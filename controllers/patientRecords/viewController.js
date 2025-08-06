@@ -1,5 +1,6 @@
 const Patient = require('../../models/patient');
 const Prescription = require('../../models/prescription');
+const PatientRecord = require('../../models/patientRecord');
 
 const viewController = {
     showHistory(req, res) {
@@ -62,7 +63,6 @@ const viewController = {
             const token = res.locals.data.token;
             const currentUser = res.locals.data.currentUser;
 
-            // Fetch latest prescription linked to this record
             let prescriptionData = {
                 drugName: '',
                 dose: '',
@@ -118,6 +118,49 @@ const viewController = {
             patients: res.locals.data.patients,
             token: res.locals.data.token
         });
+    },
+
+    // ✅ New Sick Leave View
+    async newSickLeaveView(req, res) {
+        try {
+            const patient = await Patient.findById(req.params.patientId);
+            if (!patient) return res.status(404).send('Patient not found');
+
+            const latestRecord = await PatientRecord.findOne({ patient: patient._id })
+                .sort({ createdAt: -1 })
+                .lean();
+
+            res.render('patientRecords/SickLeaveNew', {
+                patient,
+                token: req.query.token,
+                record: latestRecord || {}
+            });
+        } catch (err) {
+            res.status(500).send(err.message);
+        }
+    },
+
+    // ✅ Edit Sick Leave View
+    async editSickLeaveView(req, res) {
+        try {
+            const sickLeave = res.locals.data.sickLeave;
+            const currentUser = req.user;
+
+            const latestRecord = await PatientRecord.findOne({ patient: sickLeave.patient._id })
+                .sort({ createdAt: -1 })
+                .lean();
+
+            res.render('patientRecords/EditSickLeave', {
+            sickLeave,
+            token: req.query.token,
+            recordId: req.query.recordId,
+            latestDiagnosis: latestRecord?.diagnosis || '',  // Pass it to view
+            currentUser: req.user
+        });
+
+        } catch (err) {
+            res.status(500).send(err.message);
+        }
     }
 };
 

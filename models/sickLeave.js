@@ -3,9 +3,21 @@ const mongoose = require('mongoose');
 const sickLeaveSchema = new mongoose.Schema({
     patient: { type: mongoose.Schema.Types.ObjectId, ref: 'Patient', required: true },
     doctor: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    reason: { type: String, default: ''  },
-    durationDays: { type: Number, default: ''  },
-    issuedDate: { type: Date, default: Date.now }
+    reason: { type: String, required: false },
+    startDate: { type: Date, required: false },
+    endDate: { type: Date, required: false },
+    durationDays: { type: Number, required: false },
+    additionalNotes: String
 }, { timestamps: true });
 
-module.exports = mongoose.model('SickLeave', sickLeaveSchema);
+// Automatically calculate endDate before saving
+sickLeaveSchema.pre('validate', function(next) {
+    if (this.startDate && this.durationDays) {
+        this.endDate = new Date(this.startDate);
+        this.endDate.setDate(this.startDate.getDate() + (this.durationDays - 1));
+    }
+    next();
+});
+
+const SickLeave = mongoose.model('SickLeave', sickLeaveSchema);
+module.exports = SickLeave;

@@ -9,7 +9,7 @@ function EditRequest({ request, token, recordId, prescriptionData, currentUser }
             <p><strong>Patient:</strong> {request.patient.name}</p>
             <p><strong>Doctor:</strong> {request.doctor.name}</p>
 
-            <form method="POST" action={`/patientRecords/${request.patient._id}/editRequest/${request._id}?token=${token}`}>
+<form method="POST" action={`/patientRecords/${request.patient._id}/editRequest/${request._id}?token=${token}&recordId=${recordId}`}>
                 <label>Details:</label>
                 <textarea name="details" defaultValue={request.details || ''}></textarea>
 

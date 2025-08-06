@@ -366,3 +366,49 @@ tr:hover {
     font-size: 0.85rem;
 }
 
+/* ===================================
+   6. DOCUMENTS
+=================================== */
+.official-document {
+  background: white;
+  border: 1px solid #cbd5e0;
+  padding: 36px;
+  max-width: 850px;
+  margin: 30px auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.official-document h2 {
+  text-align: center;
+  color: #14375a;
+  margin-bottom: 20px;
+}
+
+.official-document p {
+  font-size: 1rem;
+  margin: 14px 0;
+  color: #333;
+}
+
+/* ===================================
+   7. PATIENTS
+=================================== */
+.patient-card {
+  background: white;
+  border: 1px solid #d8e3ea;
+  border-radius: 10px;
+  padding: 18px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+.patient-card .btn {
+  margin: 6px 4px;
+}
+
+.patient-details p {
+  font-size: 1.05rem;
+  margin-bottom: 10px;
+}
+
