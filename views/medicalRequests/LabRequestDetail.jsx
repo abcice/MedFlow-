@@ -23,12 +23,13 @@ function LabRequestDetail({ token, request, userRole }) {
                         <option value="Complete">Complete</option>
                     </select>
 
-                    <button type="submit" className="btn btn-success">Save</button>
+                    <button type="submit" className="btn btn-success mt-2">Save</button>
                 </form>
             )}
 
             {userRole === 'Doctor' && (
-                <form method="POST" action={`/medicalRequests/lab/${request._id}?_method=DELETE&token=${token}`} onSubmit={(e) => { if (!confirm('Delete this request?')) e.preventDefault(); }}>
+                <form method="POST" action={`/medicalRequests/lab/${request._id}?_method=DELETE&token=${token}`} 
+                      onSubmit={(e) => { if (!confirm('Delete this lab request?')) e.preventDefault(); }}>
                     <button type="submit" className="btn btn-danger mt-2">Delete</button>
                 </form>
             )}

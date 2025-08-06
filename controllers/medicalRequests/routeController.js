@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
+const puppeteer = require('puppeteer');
 const authDataController = require('../auth/dataController.js');
+
 const Request = require('../../models/request');
 const Patient = require('../../models/patient');
 const SickLeave = require('../../models/sickLeave');
@@ -139,41 +141,106 @@ router.get('/referralLetters', authDataController.auth, async (req, res) => {
 });
 
 // =============================
-// View & Delete Sick Leaves
+// Puppeteer PDF - Sick Leave
 // =============================
-router.get('/sickLeaves/:id', authDataController.auth, async (req, res) => {
-    const sickLeave = await SickLeave.findById(req.params.id).populate('patient').populate('doctor').lean();
+router.get('/sickLeaves/:id/pdf', authDataController.auth, async (req, res) => {
+    try {
+        const sickLeave = await SickLeave.findById(req.params.id)
+            .populate('patient')
+            .populate('doctor')
+            .lean();
+        if (!sickLeave) return res.status(404).send('Sick leave not found');
+
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
+
+        await page.setContent(`
+            <html>
+            <head><title>Sick Leave</title></head>
+            <body style="font-family: Arial; padding: 20px;">
+                <h2 style="text-align:center;">Medical Certificate</h2>
+                <p><b>Full Name:</b> ${sickLeave.patient.name}</p>
+                <p><b>CPR / ID:</b> ${sickLeave.patient.cpr}</p>
+                <p><b>Diagnosis:</b> ${sickLeave.reason}</p>
+                <p><b>From:</b> ${sickLeave.startDate || '-'} <b>To:</b> ${sickLeave.endDate || '-'}</p>
+                <p><b>Total Days:</b> ${sickLeave.durationDays}</p>
+                <br/>
+                <p><b>Physician:</b> Dr. ${sickLeave.doctor.name}</p>
+            </body>
+            </html>
+        `);
+
+        const pdfBuffer = await page.pdf({ format: 'A4' });
+        await browser.close();
+
+        res.contentType("application/pdf");
+        res.setHeader('Content-Disposition', 'attachment; filename="SickLeave.pdf"');
+        res.send(pdfBuffer);
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
+
+// =============================
+// Puppeteer PDF - Referral Letter
+// =============================
+router.get('/referralLetters/:id/pdf', authDataController.auth, async (req, res) => {
+    try {
+        const letter = await ReferralLetter.findById(req.params.id)
+            .populate('patient')
+            .populate('doctor')
+            .lean();
+        if (!letter) return res.status(404).send('Referral letter not found');
+
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
+
+        await page.setContent(`
+            <html>
+            <head><title>Referral Letter</title></head>
+            <body style="font-family: Arial; padding: 20px;">
+                <h2 style="text-align:center;">Referral Letter</h2>
+                <p><b>Patient Name:</b> ${letter.patient.name}</p>
+                <p><b>CPR / ID:</b> ${letter.patient.cpr}</p>
+                <p><b>Reason:</b> ${letter.reason}</p>
+                <p><b>Referring Doctor:</b> Dr. ${letter.doctor.name}</p>
+            </body>
+            </html>
+        `);
+
+        const pdfBuffer = await page.pdf({ format: 'A4' });
+        await browser.close();
+
+        res.contentType("application/pdf");
+        res.setHeader('Content-Disposition', 'attachment; filename="ReferralLetter.pdf"');
+        res.send(pdfBuffer);
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
+// =============================
+// OFFICIAL VIEW ROUTES
+// =============================
+
+// Official Sick Leave View
+router.get('/sickLeaves/:id/official', authDataController.auth, async (req, res) => {
+    const sickLeave = await SickLeave.findById(req.params.id)
+        .populate('patient')
+        .populate('doctor')
+        .lean();
     if (!sickLeave) return res.status(404).send('Sick leave not found');
-    res.render('medicalRequests/SickLeaveDetail', { sickLeave, token: req.query.token });
-});
-router.delete('/sickLeaves/:id', authDataController.auth, requireDoctor, async (req, res) => {
-    await SickLeave.findByIdAndDelete(req.params.id);
-    res.redirect(`/medicalRequests/sickLeaves?token=${req.query.token}`);
+    res.render('medicalRequests/SickLeaveOfficial', { sickLeave, token: req.query.token, userRole: req.user.role });
 });
 
-// =============================
-// View & Delete Referral Letters
-// =============================
-router.get('/referralLetters/:id', authDataController.auth, async (req, res) => {
-    const letter = await ReferralLetter.findById(req.params.id).populate('patient').populate('doctor').lean();
+// Official Referral Letter View
+router.get('/referralLetters/:id/official', authDataController.auth, async (req, res) => {
+    const letter = await ReferralLetter.findById(req.params.id)
+        .populate('patient')
+        .populate('doctor')
+        .lean();
     if (!letter) return res.status(404).send('Referral letter not found');
-    res.render('medicalRequests/ReferralLetterDetail', { letter, token: req.query.token });
-});
-router.delete('/referralLetters/:id', authDataController.auth, requireDoctor, async (req, res) => {
-    await ReferralLetter.findByIdAndDelete(req.params.id);
-    res.redirect(`/medicalRequests/referralLetters?token=${req.query.token}`);
+    res.render('medicalRequests/ReferralLetterOfficial', { letter, token: req.query.token, userRole: req.user.role });
 });
 
-// =============================
-// Delete Lab/Radiology Requests
-// =============================
-router.delete('/lab/:id', authDataController.auth, requireDoctor, async (req, res) => {
-    await Request.findByIdAndDelete(req.params.id);
-    res.redirect(`/medicalRequests/lab?token=${req.query.token}`);
-});
-router.delete('/radiology/:id', authDataController.auth, requireDoctor, async (req, res) => {
-    await Request.findByIdAndDelete(req.params.id);
-    res.redirect(`/medicalRequests/radiology?token=${req.query.token}`);
-});
 
 module.exports = router;

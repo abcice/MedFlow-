@@ -4,11 +4,22 @@ const Layout = require('../layouts/Layout');
 function SickLeavesList({ sickLeaves, token, userRole }) {
     const hasResults = sickLeaves && sickLeaves.length > 0;
 
+    const formatDate = (dateString) => {
+        if (!dateString) return '-';
+        const date = new Date(dateString);
+        return date.toLocaleDateString();
+    };
+
     return (
         <Layout token={token}>
             <h1>📝 Sick Leaves</h1>
 
-            <form method="GET" action="/medicalRequests/sickLeaves" style={{ display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' }}>
+            {/* Search Form */}
+            <form 
+                method="GET" 
+                action="/medicalRequests/sickLeaves" 
+                style={{ display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' }}
+            >
                 <input list="nameList" id="name" name="name" placeholder="Patient Name" className="form-control" style={{ flex: '1' }} />
                 <datalist id="nameList"></datalist>
 
@@ -22,10 +33,12 @@ function SickLeavesList({ sickLeaves, token, userRole }) {
                 <button type="submit" className="btn btn-primary">🔍 Search</button>
             </form>
 
+            {/* Sick Leaves Table */}
             {hasResults ? (
                 <table className="table table-striped table-bordered">
                     <thead>
                         <tr>
+                            <th>Date</th>
                             <th>Patient</th>
                             <th>Doctor</th>
                             <th>Reason</th>
@@ -36,14 +49,26 @@ function SickLeavesList({ sickLeaves, token, userRole }) {
                     <tbody>
                         {sickLeaves.map(sl => (
                             <tr key={sl._id}>
+                                <td>{formatDate(sl.createdAt)}</td>
                                 <td>{sl.patient.name}</td>
                                 <td>{sl.doctor.name}</td>
                                 <td>{sl.reason || '-'}</td>
                                 <td>{sl.durationDays || '-'}</td>
                                 <td style={{ display: 'flex', gap: '5px' }}>
-                                    <a href={`/medicalRequests/sickLeaves/${sl._id}?token=${token}`} className="btn btn-sm btn-primary">View</a>
+                                    <a 
+                                        href={`/medicalRequests/sickLeaves/${sl._id}/official?token=${token}`} 
+                                        className="btn btn-sm btn-info"
+                                    >
+                                        View Sick Leave
+                                    </a>
                                     {userRole === 'Doctor' && (
-                                        <form method="POST" action={`/medicalRequests/sickLeaves/${sl._id}?_method=DELETE&token=${token}`} onSubmit={(e) => { if (!confirm('Are you sure you want to delete this sick leave?')) e.preventDefault(); }}>
+                                        <form 
+                                            method="POST" 
+                                            action={`/medicalRequests/sickLeaves/${sl._id}?token=${token}&_method=DELETE`} 
+                                            onSubmit={(e) => { 
+                                                if (!confirm('Are you sure you want to delete this sick leave?')) e.preventDefault(); 
+                                            }}
+                                        >
                                             <button type="submit" className="btn btn-sm btn-danger">Delete</button>
                                         </form>
                                     )}
