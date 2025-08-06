@@ -1,162 +1,160 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
+const authDataController = require('../auth/dataController.js');
 const Request = require('../../models/request');
-const authDataController = require('../auth/dataController');
+const Patient = require('../../models/patient');
 
 // Multer config for uploads
 const upload = multer({ dest: 'uploads/' });
 
 // Middleware to check LabTech or Radiologist
 function requireLabOrRadiologist(req, res, next) {
-    if (!req.user || (req.user.role !== 'LabTech' && req.user.role !== 'Radiologist')) {
+    if (req.user.role !== 'LabTech' && req.user.role !== 'Radiologist') {
         return res.status(403).send('Only LabTech or Radiologist can perform this action.');
     }
     next();
 }
 
-/**
- * =============================
- * Choose Request Type
- * =============================
- */
+// =============================
+// Choose Request Type
+// =============================
 router.get('/', authDataController.auth, (req, res) => {
     res.render('medicalRequests/ChooseType', {
         token: req.query.token
     });
 });
 
-/**
- * =============================
- * Lab Requests List + Search
- * =============================
- */
+// =============================
+// Search Suggestions (Autocomplete)
+// =============================
+router.get('/searchSuggestions', authDataController.auth, async (req, res) => {
+    const { field, query } = req.query;
+
+    if (!['name', 'cpr', 'phone'].includes(field)) {
+        return res.status(400).json({ error: 'Invalid field' });
+    }
+
+    const patients = await Patient.find({
+        [field]: { $regex: '^' + query, $options: 'i' }
+    }).limit(10).select(field).lean();
+
+    res.json(patients.map(p => p[field]));
+});
+
+// =============================
+// Lab Requests List + Search
+// =============================
 router.get('/lab', authDataController.auth, async (req, res) => {
-    const { name, cpr, phone } = req.query;
-    const query = { type: 'Lab' };
+    const { name, cpr, phone, token } = req.query;
 
-    if (name) query['patient.name'] = { $regex: name, $options: 'i' };
-    if (cpr) query['patient.cpr'] = { $regex: cpr, $options: 'i' };
-    if (phone) query['patient.phone'] = { $regex: phone, $options: 'i' };
+    const patientMatch = {};
+    if (name) patientMatch['patient.name'] = { $regex: '^' + name, $options: 'i' };
+    if (cpr) patientMatch['patient.cpr'] = { $regex: '^' + cpr, $options: 'i' };
+    if (phone) patientMatch['patient.phone'] = { $regex: '^' + phone, $options: 'i' };
 
-    const requests = await Request.find(query)
-        .populate('patient')
-        .populate('doctor')
-        .lean();
+    const requests = await Request.aggregate([
+        { $match: { type: 'Lab' } },
+        {
+            $lookup: {
+                from: 'patients',
+                localField: 'patient',
+                foreignField: '_id',
+                as: 'patient'
+            }
+        },
+        { $unwind: '$patient' },
+        {
+            $lookup: {
+                from: 'users',
+                localField: 'doctor',
+                foreignField: '_id',
+                as: 'doctor'
+            }
+        },
+        { $unwind: '$doctor' },
+        { $match: patientMatch }
+    ]);
 
-    res.render('medicalRequests/LabRequestsList', { 
-        requests, 
-        token: req.query.token 
-    });
+    res.render('medicalRequests/LabRequestsList', { requests, token });
 });
 
-/**
- * =============================
- * Radiology Requests List + Search
- * =============================
- */
+// =============================
+// Radiology Requests List + Search
+// =============================
 router.get('/radiology', authDataController.auth, async (req, res) => {
-    const { name, cpr, phone } = req.query;
-    const query = { type: 'Radiology' };
+    const { name, cpr, phone, token } = req.query;
 
-    if (name) query['patient.name'] = { $regex: name, $options: 'i' };
-    if (cpr) query['patient.cpr'] = { $regex: cpr, $options: 'i' };
-    if (phone) query['patient.phone'] = { $regex: phone, $options: 'i' };
+    const patientMatch = {};
+    if (name) patientMatch['patient.name'] = { $regex: '^' + name, $options: 'i' };
+    if (cpr) patientMatch['patient.cpr'] = { $regex: '^' + cpr, $options: 'i' };
+    if (phone) patientMatch['patient.phone'] = { $regex: '^' + phone, $options: 'i' };
 
-    const requests = await Request.find(query)
-        .populate('patient')
-        .populate('doctor')
-        .lean();
+    const requests = await Request.aggregate([
+        { $match: { type: 'Radiology' } },
+        {
+            $lookup: {
+                from: 'patients',
+                localField: 'patient',
+                foreignField: '_id',
+                as: 'patient'
+            }
+        },
+        { $unwind: '$patient' },
+        {
+            $lookup: {
+                from: 'users',
+                localField: 'doctor',
+                foreignField: '_id',
+                as: 'doctor'
+            }
+        },
+        { $unwind: '$doctor' },
+        { $match: patientMatch }
+    ]);
 
-    res.render('medicalRequests/RadiologyRequestsList', { 
-        requests, 
-        token: req.query.token 
-    });
+    res.render('medicalRequests/RadiologyRequestsList', { requests, token });
 });
 
-/**
- * =============================
- * Lab Request Details
- * =============================
- */
+// =============================
+// Request Details
+// =============================
 router.get('/lab/:id', authDataController.auth, async (req, res) => {
     const request = await Request.findById(req.params.id)
         .populate('patient')
         .populate('doctor')
         .lean();
-
-    if (!request) return res.status(404).send('Lab request not found');
-
-    res.render('medicalRequests/LabRequestDetail', { 
-        request, 
-        userRole: req.user?.role || '',
-        token: req.query.token
-    });
+    res.render('medicalRequests/LabRequestDetail', { request, userRole: req.user.role, token: req.query.token });
 });
 
-/**
- * =============================
- * Radiology Request Details
- * =============================
- */
 router.get('/radiology/:id', authDataController.auth, async (req, res) => {
     const request = await Request.findById(req.params.id)
         .populate('patient')
         .populate('doctor')
         .lean();
-
-    if (!request) return res.status(404).send('Radiology request not found');
-
-    res.render('medicalRequests/RadiologyRequestDetail', { 
-        request, 
-        userRole: req.user?.role || '',
-        token: req.query.token
-    });
+    res.render('medicalRequests/RadiologyRequestDetail', { request, userRole: req.user.role, token: req.query.token });
 });
 
-/**
- * =============================
- * Update Lab Request (Only LabTech)
- * =============================
- */
-router.post(
-    '/lab/:id', 
-    authDataController.auth, 
-    requireLabOrRadiologist, 
-    upload.array('resultFiles'), 
-    async (req, res) => {
-        const files = req.files.map(f => f.path);
+// =============================
+// Update Requests (Lab & Radiology)
+// =============================
+router.post('/lab/:id', authDataController.auth, requireLabOrRadiologist, upload.array('resultFiles'), async (req, res) => {
+    const files = req.files.map(f => f.path);
+    await Request.findByIdAndUpdate(req.params.id, {
+        status: req.body.status,
+        resultText: req.body.resultText || undefined,
+        $push: { resultFiles: { $each: files } }
+    });
+    res.redirect(`/medicalRequests/lab?token=${req.query.token}`);
+});
 
-        await Request.findByIdAndUpdate(req.params.id, {
-            status: req.body.status,
-            resultText: req.body.resultText || undefined,
-            $push: { resultFiles: { $each: files } }
-        });
-
-        res.redirect(`/medicalRequests/lab?token=${req.query.token}`);
-    }
-);
-
-/**
- * =============================
- * Update Radiology Request (Only Radiologist)
- * =============================
- */
-router.post(
-    '/radiology/:id', 
-    authDataController.auth, 
-    requireLabOrRadiologist, 
-    upload.array('resultFiles'), 
-    async (req, res) => {
-        const files = req.files.map(f => f.path);
-
-        await Request.findByIdAndUpdate(req.params.id, {
-            status: req.body.status,
-            $push: { resultFiles: { $each: files } }
-        });
-
-        res.redirect(`/medicalRequests/radiology?token=${req.query.token}`);
-    }
-);
+router.post('/radiology/:id', authDataController.auth, requireLabOrRadiologist, upload.array('resultFiles'), async (req, res) => {
+    const files = req.files.map(f => f.path);
+    await Request.findByIdAndUpdate(req.params.id, {
+        status: req.body.status,
+        $push: { resultFiles: { $each: files } }
+    });
+    res.redirect(`/medicalRequests/radiology?token=${req.query.token}`);
+});
 
 module.exports = router;
