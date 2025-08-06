@@ -1,89 +1,51 @@
 const React = require('react');
-const Layout = require('../layouts/Layout');
-const { Calendar, Views, dateFnsLocalizer } = require('react-big-calendar');
-const { format, parse, startOfWeek, getDay } = require('date-fns');
 
+function Schedule({ appointments, doctors }) {
+  return (
+    <html>
+      <head>
+        <title>Schedule View</title>
+        <link rel="stylesheet" href="/public/styles.css" />
+        <link rel="stylesheet" href="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.css" />
+      </head>
+      <body>
+        <div id="calendar" style={{ height: '800px', margin: '20px' }}></div>
 
-const locales = {
-    'en-US': require('date-fns/locale/en-US')
-};
+        <script src="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.js"></script>
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            const Calendar = tui.Calendar;
 
-const localizer = dateFnsLocalizer({
-    format,
-    parse,
-    startOfWeek: () => startOfWeek(new Date(), { weekStartsOn: 0 }),
-    getDay,
-    locales
-});
+            const calendar = new Calendar('#calendar', {
+              defaultView: 'timeGrid',
+              useFormPopup: true,
+              useDetailPopup: true,
+              week: {
+                showNowIndicator: true,
+                showTimezoneCollapseButton: true,
+              },
+              calendars: ${JSON.stringify(doctors.map(doc => ({
+                id: doc._id,
+                name: doc.name,
+                backgroundColor: '#03bd9e',
+              })))}
+            });
 
-function Schedule(props) {
-    const { token, doctors, appointments, selectedDate, selectedDoctor } = props;
+            const appointments = ${JSON.stringify(appointments.map(app => ({
+              id: app._id,
+              calendarId: app.doctor._id,
+              title: app.patient.name + ' - ' + (app.reason || 'Appointment'),
+              category: 'time',
+              start: new Date(app.date).toISOString(),
+              end: new Date(new Date(app.date).getTime() + (app.estimatedDuration || 30) * 60000).toISOString()
+            })))};
 
-    // Map doctors to "resources" (columns)
-    const resources = doctors.map(doc => ({
-        resourceId: doc._id,
-        resourceTitle: `Dr. ${doc.name}`
-    }));
-
-    // Convert appointments to `react-big-calendar` events
-    const events = appointments
-        .filter(appt => !selectedDoctor || appt.doctor._id === selectedDoctor)
-        .map(appt => ({
-            id: appt._id,
-            title: appt.patient.name,
-            start: new Date(appt.startDateTime),
-            end: new Date(new Date(appt.startDateTime).getTime() + (appt.estimatedDuration || 30) * 60000),
-            resourceId: appt.doctor._id,
-            status: appt.status,
-            tooltip: `Patient: ${appt.patient.name} (${appt.patient.cpr})\nReason: ${appt.reason}\nDuration: ${appt.estimatedDuration || 'N/A'} mins`
-        }));
-
-    return (
-        <Layout token={token}>
-            <h1>📅 Appointment Schedule</h1>
-
-            {/* Filters */}
-            <form method="GET" action="/appointments/schedule" style={{ marginBottom: "20px", display: "flex", gap: "10px" }}>
-                <input type="hidden" name="token" value={token} />
-                <label>
-                    Date:
-                    <input type="date" name="date" defaultValue={selectedDate} />
-                </label>
-                <label>
-                    Doctor:
-                    <select name="doctor" defaultValue={selectedDoctor}>
-                        <option value="">All Doctors</option>
-                        {doctors.map(doc => (
-                            <option key={doc._id} value={doc._id}>Dr. {doc.name}</option>
-                        ))}
-                    </select>
-                </label>
-                <button type="submit" className="btn btn-primary">Apply</button>
-            </form>
-
-            {/* Calendar */}
-            <Calendar
-                localizer={localizer}
-                events={events}
-                defaultView={Views.DAY}
-                views={[Views.DAY]}
-                step={30} // slot size in minutes
-                timeslots={1}
-                defaultDate={selectedDate ? new Date(selectedDate) : new Date()}
-                style={{ height: '80vh' }}
-                resources={resources}
-                resourceIdAccessor="resourceId"
-                resourceTitleAccessor="resourceTitle"
-                eventPropGetter={(event) => {
-                    let bgColor = '#0077b6';
-                    if (event.status === 'Completed') bgColor = '#6c757d';
-                    if (event.status === 'Cancelled') bgColor = '#d62828';
-                    return { style: { backgroundColor: bgColor, color: 'white', borderRadius: '6px' } };
-                }}
-                tooltipAccessor="tooltip"
-            />
-        </Layout>
-    );
+            appointments.forEach(event => calendar.createSchedules([event]));
+          `
+        }} />
+      </body>
+    </html>
+  );
 }
 
 module.exports = Schedule;

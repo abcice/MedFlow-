@@ -48,10 +48,35 @@ function Edit(props) {
                 <label>Treatment Plan:</label>
                 <textarea name="treatmentPlan" defaultValue={record.treatmentPlan}></textarea>
 
-                {/* Action Buttons */}
+                {/* Request Buttons */}
                 <div style={{ marginTop: '20px' }}>
                     <button type="submit" name="action" value="Lab" className="btn btn-secondary">🧪 Lab Request</button>
                     <button type="submit" name="action" value="Radiology" className="btn btn-secondary">🩻 Radiology Request</button>
+                </div>
+                                {/* Prescriptions Section */}
+                <div style={{ marginTop: '20px' }}>
+                    <h3>Prescriptions</h3>
+
+                    {/* Button to go to favorites */}
+                    <button
+                        type="submit"
+                        name="action"
+                        value="Favorites"
+                        className="btn btn-info"
+                    >
+                        ⭐ Favorites
+                    </button>
+
+                    <input type="text" name="drugName" placeholder="Drug Name" defaultValue={props.prescriptionData?.drugName || record.drugName || ''} />
+                    <input type="text" name="dose" placeholder="Dose" defaultValue={props.prescriptionData?.dose || record.dose || ''} />
+                    <input type="text" name="route" placeholder="Route" defaultValue={props.prescriptionData?.route || record.route || ''} />
+                    <input type="text" name="frequency" placeholder="Frequency" defaultValue={props.prescriptionData?.frequency || record.frequency || ''} />
+                    <input type="text" name="duration" placeholder="Duration" defaultValue={props.prescriptionData?.duration || record.duration || ''} />
+                    <textarea name="notes" placeholder="Extra instructions" defaultValue={props.prescriptionData?.notes || record.notes || ''}></textarea>
+
+                </div>
+                {/* Printable Buttons */}
+                 <div style={{ marginTop: '20px' }}>
                     <button type="submit" name="action" value="SickLeave" className="btn btn-secondary">📝 Sick Leave</button>
                     <button type="submit" name="action" value="ReferralLetter" className="btn btn-secondary">📄 Referral Letter</button>
                 </div>

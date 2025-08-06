@@ -67,14 +67,17 @@ router.put('/:id',
 // =============================
 // Blacklist Toggle
 // =============================
-router.put('/:id/blacklist', authDataController.auth, async (req, res) => {
-    try {
-        await Patient.findByIdAndUpdate(req.params.id, { blacklisted: req.body.blacklisted });
-        res.sendStatus(200);
-    } catch (err) {
-        res.status(500).send(err.message);
+router.put('/:id/blacklist',
+    authDataController.auth,
+    async (req, res) => {
+        try {
+            await Patient.findByIdAndUpdate(req.params.id, { blacklisted: req.body.blacklisted });
+            res.sendStatus(200);
+        } catch (err) {
+            res.status(500).send(err.message);
+        }
     }
-});
+);
 
 // =============================
 // Save Draft & Redirect
@@ -88,14 +91,43 @@ router.post('/saveDraft', authDataController.auth, async (req, res) => {
             record = await PatientRecord.create(req.body);
         }
 
+        // --- Save prescription if provided ---
+        if (req.body.drugName) {
+            const Prescription = require('../../models/prescription');
+            const prescription = await Prescription.create({
+                patient: req.body.patient, // Required field
+                doctor: req.user._id,      // Required field
+                drugs: [{
+                    name: req.body.drugName,
+                    dose: req.body.dose,
+                    route: req.body.route,
+                    frequency: req.body.frequency,
+                    duration: req.body.duration
+                }],
+                notes: req.body.notes
+            });
+
+            // Link to record if not already linked
+            if (!record.prescriptions.includes(prescription._id)) {
+                record.prescriptions.push(prescription._id);
+                await record.save();
+            }
+        }
+
         const patientId = req.body.patient;
         const token = req.query.token;
         const action = req.body.action;
 
-        if (['Lab', 'Radiology', 'SickLeave', 'ReferralLetter'].includes(action)) {
-            return res.redirect(
-                `/patientRecords/${patientId}/createItem?type=${action}&token=${token}&recordId=${record._id}`
-            );
+        const quickActions = {
+            'Lab': `/patientRecords/${patientId}/createItem?type=Lab&token=${token}&recordId=${record._id}`,
+            'Radiology': `/patientRecords/${patientId}/createItem?type=Radiology&token=${token}&recordId=${record._id}`,
+            'SickLeave': `/patientRecords/${patientId}/createItem?type=SickLeave&token=${token}&recordId=${record._id}`,
+            'ReferralLetter': `/patientRecords/${patientId}/createItem?type=ReferralLetter&token=${token}&recordId=${record._id}`,
+            'Favorites': `/patientRecords/${record._id}/favorites?token=${token}`
+        };
+
+        if (quickActions[action]) {
+            return res.redirect(quickActions[action]);
         }
 
         return res.redirect(`/patientRecords/${patientId}/history?token=${token}`);
@@ -104,12 +136,23 @@ router.post('/saveDraft', authDataController.auth, async (req, res) => {
     }
 });
 
+
 // =============================
 // Unified /createItem
 // =============================
 router.get('/:patientId/createItem', authDataController.auth, async (req, res) => {
     try {
         const { type, token, recordId } = req.query;
+        const prescriptionParams = new URLSearchParams({
+            token,
+            drugName: req.query.drugName || '',
+            dose: req.query.dose || '',
+            route: req.query.route || '',
+            frequency: req.query.frequency || '',
+            duration: req.query.duration || '',
+            notes: req.query.notes || ''
+        }).toString();
+
         const patient = await Patient.findById(req.params.patientId);
         if (!patient) return res.status(404).send('Patient not found');
 
@@ -119,36 +162,17 @@ router.get('/:patientId/createItem', authDataController.auth, async (req, res) =
         }
 
         let newDoc;
-
         switch (type) {
             case 'Lab':
             case 'Radiology':
-                newDoc = await Request.create({
-                    patient: patient._id,
-                    doctor: doctor._id,
-                    type,
-                    details: 'To be filled later'
-                });
-                return res.redirect(`/patientRecords/${patient._id}/editRequest/${newDoc._id}?token=${token}&recordId=${recordId}`);
-
+                newDoc = await Request.create({ patient: patient._id, doctor: doctor._id, type, details: 'To be filled later' });
+                return res.redirect(`/patientRecords/${patient._id}/editRequest/${newDoc._id}?recordId=${recordId}&${prescriptionParams}`);
             case 'SickLeave':
-                newDoc = await SickLeave.create({
-                    patient: patient._id,
-                    doctor: doctor._id,
-                    reason: 'To be filled later',
-                    durationDays: 0
-                });
-                return res.redirect(`/patientRecords/${patient._id}/editSickLeave/${newDoc._id}?token=${token}&recordId=${recordId}`);
-
+                newDoc = await SickLeave.create({ patient: patient._id, doctor: doctor._id, reason: 'To be filled later', durationDays: 0 });
+                return res.redirect(`/patientRecords/${patient._id}/editSickLeave/${newDoc._id}?recordId=${recordId}&${prescriptionParams}`);
             case 'ReferralLetter':
-                newDoc = await ReferralLetter.create({
-                    patient: patient._id,
-                    doctor: doctor._id,
-                    referredTo: 'To be filled later',
-                    reason: 'To be filled later'
-                });
-                return res.redirect(`/patientRecords/${patient._id}/editReferralLetter/${newDoc._id}?token=${token}&recordId=${recordId}`);
-
+                newDoc = await ReferralLetter.create({ patient: patient._id, doctor: doctor._id, referredTo: 'To be filled later', reason: 'To be filled later' });
+                return res.redirect(`/patientRecords/${patient._id}/editReferralLetter/${newDoc._id}?recordId=${recordId}&${prescriptionParams}`);
             default:
                 return res.status(400).send('Invalid type');
         }
@@ -158,7 +182,7 @@ router.get('/:patientId/createItem', authDataController.auth, async (req, res) =
 });
 
 // =============================
-// Edit Lab/Radiology Request
+// GET Edit Lab/Radiology Request
 // =============================
 router.get('/:patientId/editRequest/:requestId', authDataController.auth, async (req, res) => {
     try {
@@ -168,7 +192,15 @@ router.get('/:patientId/editRequest/:requestId', authDataController.auth, async 
         res.render('patientRecords/EditRequest', {
             request,
             token: req.query.token,
-            recordId: req.query.recordId
+            recordId: req.query.recordId,
+            prescriptionData: {
+                drugName: req.query.drugName || '',
+                dose: req.query.dose || '',
+                route: req.query.route || '',
+                frequency: req.query.frequency || '',
+                duration: req.query.duration || '',
+                notes: req.query.notes || ''
+            }
         });
     } catch (err) {
         res.status(500).send(err.message);
@@ -178,14 +210,23 @@ router.get('/:patientId/editRequest/:requestId', authDataController.auth, async 
 router.post('/:patientId/editRequest/:requestId', authDataController.auth, async (req, res) => {
     try {
         await Request.findByIdAndUpdate(req.params.requestId, req.body);
-        res.redirect(`/patientRecords/${req.query.recordId}/edit?token=${req.query.token}`);
+        const prescriptionParams = new URLSearchParams({
+            token: req.query.token,
+            drugName: req.query.drugName || '',
+            dose: req.query.dose || '',
+            route: req.query.route || '',
+            frequency: req.query.frequency || '',
+            duration: req.query.duration || '',
+            notes: req.query.notes || ''
+        }).toString();
+        res.redirect(`/patientRecords/${req.query.recordId}/edit?${prescriptionParams}`);
     } catch (err) {
         res.status(500).send(err.message);
     }
 });
 
 // =============================
-// Edit Sick Leave
+// GET Edit Sick Leave
 // =============================
 router.get('/:patientId/editSickLeave/:sickLeaveId', authDataController.auth, async (req, res) => {
     try {
@@ -195,7 +236,15 @@ router.get('/:patientId/editSickLeave/:sickLeaveId', authDataController.auth, as
         res.render('patientRecords/EditSickLeave', {
             sickLeave,
             token: req.query.token,
-            recordId: req.query.recordId
+            recordId: req.query.recordId,
+            prescriptionData: {
+                drugName: req.query.drugName || '',
+                dose: req.query.dose || '',
+                route: req.query.route || '',
+                frequency: req.query.frequency || '',
+                duration: req.query.duration || '',
+                notes: req.query.notes || ''
+            }
         });
     } catch (err) {
         res.status(500).send(err.message);
@@ -205,14 +254,23 @@ router.get('/:patientId/editSickLeave/:sickLeaveId', authDataController.auth, as
 router.post('/:patientId/editSickLeave/:sickLeaveId', authDataController.auth, async (req, res) => {
     try {
         await SickLeave.findByIdAndUpdate(req.params.sickLeaveId, req.body);
-        res.redirect(`/patientRecords/${req.query.recordId}/edit?token=${req.query.token}`);
+        const prescriptionParams = new URLSearchParams({
+            token: req.query.token,
+            drugName: req.query.drugName || '',
+            dose: req.query.dose || '',
+            route: req.query.route || '',
+            frequency: req.query.frequency || '',
+            duration: req.query.duration || '',
+            notes: req.query.notes || ''
+        }).toString();
+        res.redirect(`/patientRecords/${req.query.recordId}/edit?${prescriptionParams}`);
     } catch (err) {
         res.status(500).send(err.message);
     }
 });
 
 // =============================
-// Edit Referral Letter
+// GET Edit Referral Letter
 // =============================
 router.get('/:patientId/editReferralLetter/:referralLetterId', authDataController.auth, async (req, res) => {
     try {
@@ -222,7 +280,15 @@ router.get('/:patientId/editReferralLetter/:referralLetterId', authDataControlle
         res.render('patientRecords/EditReferralLetter', {
             referralLetter,
             token: req.query.token,
-            recordId: req.query.recordId
+            recordId: req.query.recordId,
+            prescriptionData: {
+                drugName: req.query.drugName || '',
+                dose: req.query.dose || '',
+                route: req.query.route || '',
+                frequency: req.query.frequency || '',
+                duration: req.query.duration || '',
+                notes: req.query.notes || ''
+            }
         });
     } catch (err) {
         res.status(500).send(err.message);
@@ -232,10 +298,67 @@ router.get('/:patientId/editReferralLetter/:referralLetterId', authDataControlle
 router.post('/:patientId/editReferralLetter/:referralLetterId', authDataController.auth, async (req, res) => {
     try {
         await ReferralLetter.findByIdAndUpdate(req.params.referralLetterId, req.body);
-        res.redirect(`/patientRecords/${req.query.recordId}/edit?token=${req.query.token}`);
+        const prescriptionParams = new URLSearchParams({
+            token: req.query.token,
+            drugName: req.query.drugName || '',
+            dose: req.query.dose || '',
+            route: req.query.route || '',
+            frequency: req.query.frequency || '',
+            duration: req.query.duration || '',
+            notes: req.query.notes || ''
+        }).toString();
+        res.redirect(`/patientRecords/${req.query.recordId}/edit?${prescriptionParams}`);
     } catch (err) {
         res.status(500).send(err.message);
     }
+});
+
+// =============================
+// Favorites
+// =============================
+router.get('/:recordId/favorites', authDataController.auth, async (req, res) => {
+    const FavoritePrescription = require('../../models/favoritePrescription');
+    const favorites = await FavoritePrescription.find({ doctor: req.user._id }).lean();
+    res.render('patientRecords/Favorites', {
+        favorites,
+        token: req.query.token,
+        recordId: req.params.recordId
+    });
+});
+
+router.post('/:recordId/favorites', authDataController.auth, async (req, res) => {
+    const FavoritePrescription = require('../../models/favoritePrescription');
+    await FavoritePrescription.create({
+        doctor: req.user._id,
+        name: req.body.name,
+        drugs: [{
+            drugName: req.body.drugName,
+            dose: req.body.dose,
+            route: req.body.route,
+            frequency: req.body.frequency,
+            duration: req.body.duration,
+            notes: req.body.notes
+        }]
+    });
+    res.redirect(`/patientRecords/${req.params.recordId}/favorites?token=${req.query.token}`);
+});
+
+router.post('/:recordId/useFavorite/:favId', authDataController.auth, async (req, res) => {
+    const FavoritePrescription = require('../../models/favoritePrescription');
+    const fav = await FavoritePrescription.findById(req.params.favId).lean();
+    if (!fav) return res.status(404).send('Favorite not found');
+
+    const params = new URLSearchParams({
+        token: req.query.token,
+        drugName: fav.drugs[0]?.drugName || '',
+        dose: fav.drugs[0]?.dose || '',
+        route: fav.drugs[0]?.route || '',
+        frequency: fav.drugs[0]?.frequency || '',
+        duration: fav.drugs[0]?.duration || '',
+        notes: fav.drugs[0]?.notes || ''
+    }).toString();
+
+    res.redirect(`/patientRecords/${req.params.recordId}/edit?${params}`);
 });
 
 module.exports = router;
