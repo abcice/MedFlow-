@@ -140,6 +140,9 @@ router.post('/saveDraft', authDataController.auth, async (req, res) => {
 // =============================
 // Unified /createItem
 // =============================
+// =============================
+// Unified /createItem
+// =============================
 router.get('/:patientId/createItem', authDataController.auth, async (req, res) => {
     try {
         const { type, token, recordId } = req.query;
@@ -165,14 +168,30 @@ router.get('/:patientId/createItem', authDataController.auth, async (req, res) =
         switch (type) {
             case 'Lab':
             case 'Radiology':
-                newDoc = await Request.create({ patient: patient._id, doctor: doctor._id, type, details: 'To be filled later' });
+                newDoc = await Request.create({
+                    patient: patient._id,
+                    doctor: doctor._id,
+                    type
+                    // no "details" filled here, leave it empty
+                });
                 return res.redirect(`/patientRecords/${patient._id}/editRequest/${newDoc._id}?recordId=${recordId}&${prescriptionParams}`);
+
             case 'SickLeave':
-                newDoc = await SickLeave.create({ patient: patient._id, doctor: doctor._id, reason: 'To be filled later', durationDays: 0 });
+                newDoc = await SickLeave.create({
+                    patient: patient._id,
+                    doctor: doctor._id
+                    // no reason or durationDays yet
+                });
                 return res.redirect(`/patientRecords/${patient._id}/editSickLeave/${newDoc._id}?recordId=${recordId}&${prescriptionParams}`);
+
             case 'ReferralLetter':
-                newDoc = await ReferralLetter.create({ patient: patient._id, doctor: doctor._id, referredTo: 'To be filled later', reason: 'To be filled later' });
+                newDoc = await ReferralLetter.create({
+                    patient: patient._id,
+                    doctor: doctor._id
+                    // no referredTo or reason yet
+                });
                 return res.redirect(`/patientRecords/${patient._id}/editReferralLetter/${newDoc._id}?recordId=${recordId}&${prescriptionParams}`);
+
             default:
                 return res.status(400).send('Invalid type');
         }
@@ -180,6 +199,7 @@ router.get('/:patientId/createItem', authDataController.auth, async (req, res) =
         res.status(500).send(err.message);
     }
 });
+
 
 // =============================
 // GET Edit Lab/Radiology Request
@@ -360,5 +380,68 @@ router.post('/:recordId/useFavorite/:favId', authDataController.auth, async (req
 
     res.redirect(`/patientRecords/${req.params.recordId}/edit?${params}`);
 });
+// =============================
+// Delete Lab/Radiology Request
+// =============================
+router.delete('/:patientId/deleteRequest/:requestId', authDataController.auth, async (req, res) => {
+    try {
+        if (req.user.role !== 'Doctor') {
+            return res.status(403).send('Only doctors can delete requests.');
+        }
+        await Request.findByIdAndDelete(req.params.requestId);
+        res.redirect(`/patientRecords/${req.params.patientId}/edit?token=${req.query.token}`);
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
+
+// =============================
+// Delete Sick Leave
+// =============================
+router.delete('/:patientId/deleteSickLeave/:sickLeaveId', authDataController.auth, async (req, res) => {
+    try {
+        if (req.user.role !== 'Doctor') {
+            return res.status(403).send('Only doctors can delete sick leaves.');
+        }
+        await SickLeave.findByIdAndDelete(req.params.sickLeaveId);
+        res.redirect(`/patientRecords/${req.params.patientId}/edit?token=${req.query.token}`);
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
+
+// =============================
+// Delete Referral Letter
+// =============================
+router.delete('/:patientId/deleteReferralLetter/:referralLetterId', authDataController.auth, async (req, res) => {
+    try {
+        if (req.user.role !== 'Doctor') {
+            return res.status(403).send('Only doctors can delete referral letters.');
+        }
+        await ReferralLetter.findByIdAndDelete(req.params.referralLetterId);
+        res.redirect(`/patientRecords/${req.params.patientId}/edit?token=${req.query.token}`);
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
+// View Sick Leaves List
+router.get('/sickLeaves', authDataController.auth, async (req, res) => {
+    const sickLeaves = await SickLeave.find()
+        .populate('patient')
+        .populate('doctor')
+        .lean();
+    res.render('patientRecords/SickLeavesList', { sickLeaves, token: req.query.token });
+});
+
+// View Referral Letters List
+router.get('/referralLetters', authDataController.auth, async (req, res) => {
+    const referralLetters = await ReferralLetter.find()
+        .populate('patient')
+        .populate('doctor')
+        .lean();
+    res.render('patientRecords/ReferralLettersList', { referralLetters, token: req.query.token });
+});
+
+
 
 module.exports = router;

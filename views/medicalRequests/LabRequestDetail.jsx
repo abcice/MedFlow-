@@ -27,7 +27,13 @@ function LabRequestDetail({ token, request, userRole }) {
                 </form>
             )}
 
-            <a href={`/medicalRequests/lab?token=${token}`} className="btn btn-secondary">← Go Back</a>
+            {userRole === 'Doctor' && (
+                <form method="POST" action={`/medicalRequests/lab/${request._id}?_method=DELETE&token=${token}`} onSubmit={(e) => { if (!confirm('Delete this request?')) e.preventDefault(); }}>
+                    <button type="submit" className="btn btn-danger mt-2">Delete</button>
+                </form>
+            )}
+
+            <a href={`/medicalRequests/lab?token=${token}`} className="btn btn-secondary mt-3">← Go Back</a>
         </Layout>
     );
 }

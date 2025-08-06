@@ -20,7 +20,7 @@ const requestSchema = new mongoose.Schema({
         enum: ['Lab', 'Radiology'], 
         required: true 
     },
-    details: { type: String, required: true }, 
+    details: { type: String, default: ''  }, 
     status: { 
         type: String, 
         enum: ['Pending', 'Completed'], 

@@ -1,9 +1,7 @@
 const React = require('react');
 const Layout = require('../layouts/Layout');
 
-function Dashboard(props) {
-    const token = props.token;
-
+function Dashboard({ token }) {
     return (
         <Layout token={token}>
             <div className="dashboard-container">
@@ -18,10 +16,10 @@ function Dashboard(props) {
                     <a href={`/appointments?token=${token}`} className="dashboard-btn btn-primary">📅 View Appointments</a>
                     <a href={`/appointments/new?token=${token}`} className="dashboard-btn btn-primary">➕ Create Appointment</a>
                     <a href={`/patientRecords?token=${token}`} className="dashboard-btn btn-primary">📜 Patient Records</a>
-                    <a href={`/medicalRequests?token=${token}`} className="dashboard-btn btn-warning">🧪 Medical Requests</a>
-                    <a href={`/appointments/schedule?token=${token}`} className="btn btn-primary dashboard-btn">📅 View Schedule</a>
-
+                    <a href={`/appointments/schedule?token=${token}`} className="dashboard-btn btn-primary">📅 View Schedule</a>
                     
+                    {/* New Requests Management button */}
+                    <a href={`/medicalRequests?token=${token}`} className="dashboard-btn btn-primary">📋 Requests Management</a>
                 </div>
             </div>
         </Layout>
