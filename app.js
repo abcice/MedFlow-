@@ -7,7 +7,7 @@ const userRoutes = require('./controllers/auth/routeController');
 const patientsRoutes = require('./controllers/patients/routeController');
 const dashboardRoutes = require('./controllers/dashboard/routeController');
 
-
+const medicalRequestsRoutes = require('./controllers/medicalRequests/routeController');
 const appointmentsRoutes = require('./controllers/appointments/routeController')
 const apiRoutes = require('./routes/apiRoutes');
 const passToken = require('./middleware/passToken');
@@ -43,5 +43,8 @@ app.use('/patientRecords', patientRecordRoutes);
 app.use('/api', apiRoutes);
 // Dashboard Route
 app.use('/dashboard', dashboardRoutes);
+//medical requests route
+app.use('/medicalRequests', medicalRequestsRoutes);
+
 
 module.exports = app;

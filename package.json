@@ -40,7 +40,9 @@
     "morgan": "^1.10.1",
     "multer": "^2.0.2",
     "react-big-calendar": "^1.19.4",
-    "tui-calendar": "^1.15.3"
+    "tui-calendar": "^1.15.3",
+    "tui-date-picker": "^4.3.3",
+    "tui-time-picker": "^2.1.6"
   },
   "devDependencies": {
     "artillery": "^1.7.9",
