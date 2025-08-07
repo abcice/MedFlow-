@@ -1,4 +1,3 @@
-// models/referralLetter.js
 const mongoose = require('mongoose');
 
 const referralLetterSchema = new mongoose.Schema({

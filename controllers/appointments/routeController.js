@@ -38,13 +38,13 @@ router.get('/:id/edit',
 // Update Appointment
 router.put('/:id',
     authDataController.auth,
-    dataController.update,       // ✅ Move logic into dataController
+    dataController.update,       
     viewController.redirectHome
 );
 //schdule 
 router.get('/schedule',
     authDataController.auth,
-    dataController.index, // already fetches doctors, appointments, date, doctor
+    dataController.index, 
     viewController.schedule
 );
 

@@ -1,4 +1,3 @@
-// views/medicalRequests/ReferralLetterOfficial.jsx
 const React = require('react');
 const Layout = require('../layouts/Layout');
 

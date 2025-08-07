@@ -26,7 +26,6 @@ function History({ patient, records, token }) {
                         <p><strong>Diagnosis:</strong> {record.diagnosis}</p>
                         <p><strong>Treatment Plan:</strong> {record.treatmentPlan}</p>
                         <p><strong>Private Note:</strong> {record.privateNote || 'N/A'}</p>
-                        {/* You can expand to include prescriptions, labs, imaging */}
                     </div>
                 ))
             )}

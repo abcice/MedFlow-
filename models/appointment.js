@@ -12,11 +12,10 @@ const appointmentSchema = new mongoose.Schema({
     },
     reason: String,
 
-    // New Field: Estimated Duration
     estimatedDuration: { 
-        type: Number, // store in minutes
-        min: 5,       // optional validation
-        max: 480      // optional validation (8 hours)
+        type: Number, 
+        min: 5,       
+        max: 480      
     }
 }, { timestamps: true });
 

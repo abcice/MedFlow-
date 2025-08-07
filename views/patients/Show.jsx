@@ -3,7 +3,7 @@ const Layout = require('../layouts/Layout');
 
 function Show(props) {
     const patient = props.patient;
-    const token = props.token; // ✅ Fix: store token from props
+    const token = props.token; 
 
     return (
         <Layout patient={patient} token={props.token}>

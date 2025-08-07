@@ -24,7 +24,7 @@ exports.auth = async (req, res, next) => {
     
     req.user = user;
     res.locals.data.token = token;
-    res.locals.data.currentUser = user; // ✅ Store logged-in user for views/controllers
+    res.locals.data.currentUser = user; 
 
     next();
   } catch (error) {

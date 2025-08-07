@@ -14,14 +14,13 @@ router.post('/', dataController.createUser, viewController.redirectToLogin)// si
 
 // Login
 
-router.get('/login', viewController.signIn) // show login form
+router.get('/login', viewController.signIn) 
 router.post('/login', 
     dataController.loginUser, 
     dashboardViewController.redirectHome
 );
 //logout
 router.get('/logout', (req, res) => {
-    // Just redirect to login without a token
     res.redirect('/users/login');
 });
 

@@ -9,7 +9,7 @@ const billingSchema = new mongoose.Schema({
     appointment: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Appointment' 
-    }, // Optional link to appointment
+    }, 
     amountDue: { 
         type: Number, 
         required: true 
@@ -23,7 +23,7 @@ const billingSchema = new mongoose.Schema({
         enum: ['Cash', 'Insurance'], 
         required: true 
     },
-    insuranceProvider: String, // Only if paymentMethod is Insurance
+    insuranceProvider: String, 
     paymentDate: { 
         type: Date 
     },

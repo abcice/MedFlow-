@@ -5,7 +5,7 @@ function Layout(props) {
 
     // Hide navbar on login & signup pages
     const hideNavbar =
-        props.hideNavbar || // Explicit prop
+        props.hideNavbar || 
         (props.page && (props.page === 'login' || props.page === 'signup'));
 
     return (

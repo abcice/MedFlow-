@@ -10,7 +10,6 @@ const sickLeaveSchema = new mongoose.Schema({
     additionalNotes: String
 }, { timestamps: true });
 
-// Automatically calculate endDate before saving
 sickLeaveSchema.pre('validate', function(next) {
     if (this.startDate && this.durationDays) {
         this.endDate = new Date(this.startDate);

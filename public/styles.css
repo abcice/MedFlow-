@@ -412,3 +412,34 @@ tr:hover {
   margin-bottom: 10px;
 }
 
+/* ===================================
+   9. MEDICAL REQUESTS PAGE
+=================================== */
+.requests-header {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.request-button {
+  padding: 14px 20px;
+  font-size: 1rem;
+  border-radius: 8px;
+  background-color: #0077b6;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  border: none;
+  transition: 0.3s;
+  min-width: 180px;
+  text-align: center;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+}
+
+.request-button:hover {
+  background-color: #023e8a;
+  transform: translateY(-2px);
+}
+

@@ -16,9 +16,6 @@ function Dashboard({ token }) {
                     <a href={`/appointments?token=${token}`} className="dashboard-btn btn-primary">📅 View Appointments</a>
                     <a href={`/appointments/new?token=${token}`} className="dashboard-btn btn-primary">➕ Create Appointment</a>
                     <a href={`/patientRecords?token=${token}`} className="dashboard-btn btn-primary">📜 Patient Records</a>
-                    <a href={`/appointments/schedule?token=${token}`} className="dashboard-btn btn-primary">📅 View Schedule</a>
-                    
-                    {/* New Requests Management button */}
                     <a href={`/medicalRequests?token=${token}`} className="dashboard-btn btn-primary">📋 Requests Management</a>
                 </div>
             </div>

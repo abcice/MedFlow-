@@ -87,7 +87,6 @@ dataController.show = async (req, res, next) => {
 // UPDATE — Edit appointment
 dataController.update = async (req, res, next) => {
     try {
-        // If patient CPR is changed, find the patient
         if (req.body.patientCPR) {
             const patient = await Patient.findOne({ cpr: req.body.patientCPR });
             if (!patient) {

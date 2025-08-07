@@ -203,7 +203,7 @@ dataController.createRequest = async (req, res, next) => {
         const newRequest = await Request.create({
             patient: patient._id,
             doctor: doctor._id,
-            type: req.query.type, // Lab or Radiology from URL
+            type: req.query.type, 
             details: req.body.details
         });
 
@@ -233,7 +233,6 @@ dataController.createSickLeave = async (req, res) => {
             reason: req.body.reason,
             durationDays: req.body.durationDays
         });
-        // Redirect back to the "new record" page, not history
         res.redirect(`/patientRecords/${req.params.patientId}/history/new?token=${req.query.token}`);
     } catch (err) {
         res.status(400).send(err.message);

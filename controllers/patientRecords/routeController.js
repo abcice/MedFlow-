@@ -108,7 +108,7 @@ router.post('/saveDraft', authDataController.auth, async (req, res) => {
                 notes: req.body.notes
             });
 
-            // Link to record if not already linked
+           
             if (!record.prescriptions.includes(prescription._id)) {
                 record.prescriptions.push(prescription._id);
                 await record.save();
@@ -141,9 +141,6 @@ router.post('/saveDraft', authDataController.auth, async (req, res) => {
 // =============================
 // Unified /createItem
 // =============================
-// =============================
-// Unified /createItem
-// =============================
 router.get('/:patientId/createItem', authDataController.auth, async (req, res) => {
     try {
         const { type, token, recordId } = req.query;
@@ -173,7 +170,7 @@ router.get('/:patientId/createItem', authDataController.auth, async (req, res) =
                     patient: patient._id,
                     doctor: doctor._id,
                     type
-                    // no "details" filled here, leave it empty
+                    
                 });
                 return res.redirect(`/patientRecords/${patient._id}/editRequest/${newDoc._id}?recordId=${recordId}&${prescriptionParams}`);
 
@@ -181,7 +178,7 @@ router.get('/:patientId/createItem', authDataController.auth, async (req, res) =
                 newDoc = await SickLeave.create({
                     patient: patient._id,
                     doctor: doctor._id
-                    // no reason or durationDays yet
+                    
                 });
                 return res.redirect(`/patientRecords/${patient._id}/editSickLeave/${newDoc._id}?recordId=${recordId}&${prescriptionParams}`);
 
@@ -189,7 +186,7 @@ router.get('/:patientId/createItem', authDataController.auth, async (req, res) =
                 newDoc = await ReferralLetter.create({
                     patient: patient._id,
                     doctor: doctor._id
-                    // no referredTo or reason yet
+                    
                 });
                 return res.redirect(`/patientRecords/${patient._id}/editReferralLetter/${newDoc._id}?recordId=${recordId}&${prescriptionParams}`);
 
@@ -213,7 +210,7 @@ router.get('/:patientId/editRequest/:requestId', authDataController.auth, async 
         res.render('patientRecords/EditRequest', {
             request,
             token: req.query.token,
-            recordId: req.query.recordId, // ✅ pass this to the view
+            recordId: req.query.recordId, 
             prescriptionData: {
                 drugName: req.query.drugName || '',
                 dose: req.query.dose || '',

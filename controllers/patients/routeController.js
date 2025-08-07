@@ -13,9 +13,9 @@ const patientRecordsViewController = require('../patientRecords/viewController')
 
 // Index — Show all patients for logged-in user
 router.get('/', 
-    authDataController.auth,        // Check token, set req.user
-    dataController.index,           // Get list of patients
-    viewController.index             // Render patient list
+    authDataController.auth,        
+    dataController.index,          
+    viewController.index             
 );
 
 // search patients by CPR
@@ -33,14 +33,14 @@ router.get('/new',
 
 // Delete Patient
 router.delete('/:id', 
-    authDataController.auth,        // Any logged-in user can delete patients
+    authDataController.auth,        
     dataController.destroy, 
     viewController.redirectHome
 );
 
 // Update Patient
 router.put('/:id', 
-    authDataController.auth,        // Any logged-in user can update patients
+    authDataController.auth,        
     dataController.update, 
     viewController.redirectShow
 );

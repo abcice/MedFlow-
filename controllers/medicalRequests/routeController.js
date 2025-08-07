@@ -143,7 +143,7 @@ router.get('/referralLetters', authDataController.auth, async (req, res) => {
 // =============================
 // Puppeteer PDF - Sick Leave
 // =============================
-router.get('/sickLeaves/:id/pdf', authDataController.auth, async (req, res) => {
+router.get('/sickLeaves/:id/official/download', authDataController.auth, async (req, res) => {
     try {
         const sickLeave = await SickLeave.findById(req.params.id)
             .populate('patient')
@@ -180,6 +180,7 @@ router.get('/sickLeaves/:id/pdf', authDataController.auth, async (req, res) => {
         res.status(500).send(err.message);
     }
 });
+
 
 // =============================
 // Puppeteer PDF - Referral Letter

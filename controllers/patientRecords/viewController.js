@@ -120,7 +120,7 @@ const viewController = {
         });
     },
 
-    // ✅ New Sick Leave View
+    //  New Sick Leave View
     async newSickLeaveView(req, res) {
         try {
             const patient = await Patient.findById(req.params.patientId);
@@ -140,7 +140,7 @@ const viewController = {
         }
     },
 
-    // ✅ Edit Sick Leave View
+    //  Edit Sick Leave View
     async editSickLeaveView(req, res) {
         try {
             const sickLeave = res.locals.data.sickLeave;
